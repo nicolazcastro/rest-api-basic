@@ -1,4 +1,4 @@
-import { Visibility, Weather } from "./enums"
+import { Visibility, Weather } from './enums'
 export interface DiaryEntry {
   id: number
   date: string
