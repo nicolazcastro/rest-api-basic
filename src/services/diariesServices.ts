@@ -12,10 +12,7 @@ export async function findById (id: string): Promise<DiaryEntry | any> {
   dotenv.config()
   const DB_URL: string = process.env.DB_URL as string
   const DB_NAME: string = process.env.DB_NAME as string
-  // const DB_PORT: string = process.env.DB_PORT as string
-  // const POOL_SIZE: string = process.env.POOL_SIZE as string
 
-  // await connect(DB_URL + ':' + DB_PORT + '/' + DB_NAME)
   return await connect(DB_URL + '/' + DB_NAME).then(async () => {
     const Diary = model<IDiaryEntry>('diaries', DiarySchema)
 
