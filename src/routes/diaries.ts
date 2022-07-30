@@ -9,9 +9,15 @@ router.get('/', (_req, res) => {
 })
 
 router.get('/:id', (req, res) => {
-  const diary = diaryServices.findById(+req.params.id)
-
-  return (diary != null) ? res.send(diary) : res.sendStatus(404)
+  console.log(req.params.id)
+  diaryServices.findById(req.params.id).then((diary) => {
+    console.log('Result from service: ')
+    console.log(diary)
+    return (diary != null) ? res.send(diary) : res.sendStatus(404)
+  }).catch((e: any) => {
+    console.log(e)
+    throw new Error(e)
+  })
 })
 
 router.post('/', (req, res) => {
@@ -21,7 +27,7 @@ router.post('/', (req, res) => {
     const addedDiaryEntry = diaryServices.addDiary(newDiaryEntry)
 
     res.json(addedDiaryEntry)
-  } catch (e) {
+  } catch (e: any) {
     res.status(400).send(e.message)
   }
 })
