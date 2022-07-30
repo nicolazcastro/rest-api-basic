@@ -8,11 +8,10 @@ dotenv.config()
 const DB_URL: string = process.env.DB_URL as string
 const DB_NAME: string = process.env.DB_NAME as string
 const diaries: DiaryEntry[] = diaryData as DiaryEntry[]
+const Diary = model<IDiaryEntry>('diaries', DiarySchema)
 
 export async function getEntries (): Promise<DiaryEntry[] | any> {
   return await connect(DB_URL + '/' + DB_NAME).then(async () => {
-    const Diary = model<IDiaryEntry>('diaries', DiarySchema)
-
     return await Diary.find().then((entries: INonSensitiveInfoDiaryEntry[] | null) => {
       console.log('Result from DB: ')
       console.log(entries)
@@ -45,13 +44,7 @@ export async function getEntries (): Promise<DiaryEntry[] | any> {
 }
 
 export async function findByIdWithoutSensitiveInfo (id: string): Promise<DiaryEntry | any> {
-  dotenv.config()
-  const DB_URL: string = process.env.DB_URL as string
-  const DB_NAME: string = process.env.DB_NAME as string
-
   return await connect(DB_URL + '/' + DB_NAME).then(async () => {
-    const Diary = model<IDiaryEntry>('diaries', DiarySchema)
-
     return await Diary.findById(id).then((entry: INonSensitiveInfoDiaryEntry | null) => {
       console.log('Result from DB: ')
       console.log(entry)
@@ -79,13 +72,7 @@ export async function findByIdWithoutSensitiveInfo (id: string): Promise<DiaryEn
 }
 
 export async function findById (id: string): Promise<DiaryEntry | any> {
-  dotenv.config()
-  const DB_URL: string = process.env.DB_URL as string
-  const DB_NAME: string = process.env.DB_NAME as string
-
   return await connect(DB_URL + '/' + DB_NAME).then(async () => {
-    const Diary = model<IDiaryEntry>('diaries', DiarySchema)
-
     return await Diary.findById(id).then((entry: INonSensitiveInfoDiaryEntry | null) => {
       console.log('Result from DB: ')
       console.log(entry)
