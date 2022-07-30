@@ -4,15 +4,12 @@ import diaryData from './diaries.json'
 import dotenv from 'dotenv'
 import { connect, model } from 'mongoose'
 
+dotenv.config()
+const DB_URL: string = process.env.DB_URL as string
+const DB_NAME: string = process.env.DB_NAME as string
 const diaries: DiaryEntry[] = diaryData as DiaryEntry[]
 
-// export const getEntries = (): DiaryEntry[] => diaries
-
 export async function getEntries (): Promise<DiaryEntry[] | any> {
-  dotenv.config()
-  const DB_URL: string = process.env.DB_URL as string
-  const DB_NAME: string = process.env.DB_NAME as string
-
   return await connect(DB_URL + '/' + DB_NAME).then(async () => {
     const Diary = model<IDiaryEntry>('diaries', DiarySchema)
 
