@@ -1,14 +1,53 @@
 import { DiarySchema, IDiaryEntry, INonSensitiveInfoDiaryEntry } from '../models/diary'
-import { DiaryEntry, NonSensitiveInfoDiaryEntry, NewDiaryEntry } from '../types'
+import { DiaryEntry, NewDiaryEntry } from '../types'
 import diaryData from './diaries.json'
 import dotenv from 'dotenv'
 import { connect, model } from 'mongoose'
 
 const diaries: DiaryEntry[] = diaryData as DiaryEntry[]
 
-export const getEntries = (): DiaryEntry[] => diaries
+// export const getEntries = (): DiaryEntry[] => diaries
 
-export async function findById (id: string): Promise<DiaryEntry | any> {
+export async function getEntries (): Promise<DiaryEntry[] | any> {
+  dotenv.config()
+  const DB_URL: string = process.env.DB_URL as string
+  const DB_NAME: string = process.env.DB_NAME as string
+
+  return await connect(DB_URL + '/' + DB_NAME).then(async () => {
+    const Diary = model<IDiaryEntry>('diaries', DiarySchema)
+
+    return await Diary.find().then((entries: INonSensitiveInfoDiaryEntry[] | null) => {
+      console.log('Result from DB: ')
+      console.log(entries)
+      if (entries == null) {
+        return entries
+      } else {
+        const objs: any[] = []
+        entries.forEach(element => {
+          const obj: Partial<INonSensitiveInfoDiaryEntry> = {
+            id: element._id,
+            date: element.date,
+            weather: element.weather,
+            visibility: element.visibility
+          }
+          objs.push(obj)
+        })
+
+        return objs
+      }
+    }).catch((e: any) => {
+      console.log(e)
+      throw new Error(e)
+    })
+  }
+
+  ).catch((e: any) => {
+    console.log(e)
+    throw new Error(e)
+  })
+}
+
+export async function findByIdWithoutSensitiveInfo (id: string): Promise<DiaryEntry | any> {
   dotenv.config()
   const DB_URL: string = process.env.DB_URL as string
   const DB_NAME: string = process.env.DB_NAME as string
@@ -42,14 +81,28 @@ export async function findById (id: string): Promise<DiaryEntry | any> {
   })
 }
 
-export const getEntriesWithoutSensitiveInfo = (): NonSensitiveInfoDiaryEntry[] => {
-  return diaries.map(({ id, date, weather, visibility }) => {
-    return {
-      id,
-      date,
-      weather,
-      visibility
-    }
+export async function findById (id: string): Promise<DiaryEntry | any> {
+  dotenv.config()
+  const DB_URL: string = process.env.DB_URL as string
+  const DB_NAME: string = process.env.DB_NAME as string
+
+  return await connect(DB_URL + '/' + DB_NAME).then(async () => {
+    const Diary = model<IDiaryEntry>('diaries', DiarySchema)
+
+    return await Diary.findById(id).then((entry: INonSensitiveInfoDiaryEntry | null) => {
+      console.log('Result from DB: ')
+      console.log(entry)
+
+      return entry
+    }).catch((e: any) => {
+      console.log(e)
+      throw new Error(e)
+    })
+  }
+
+  ).catch((e: any) => {
+    console.log(e)
+    throw new Error(e)
   })
 }
 
