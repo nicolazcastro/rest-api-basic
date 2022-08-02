@@ -1,4 +1,4 @@
-import { Weather, Visibility } from '../enums'
+import { Weather, Visibility } from '../models/enums'
 
 const parseComment = (commentFromRequest: any): string => {
   if (!isString(commentFromRequest)) {

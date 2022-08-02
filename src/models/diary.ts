@@ -1,5 +1,5 @@
 import { Schema, Document } from 'mongoose'
-import { Visibility, Weather } from '../enums'
+import { Visibility, Weather } from './enums'
 
 export interface IDiaryEntry extends Document{
   id: string
