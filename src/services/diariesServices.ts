@@ -107,3 +107,39 @@ export async function addDiary (parsedDiaryEntry: INewDiaryEntry): Promise<IDiar
     })
   })
 }
+
+export async function updateDiary (id: string, parsedDiaryEntry: INewDiaryEntry): Promise<IDiaryEntry | any> {
+  return await connect(DB_URL + '/' + DB_NAME).then(async () => {
+    const updatedDiaryEntry = {
+      date: parsedDiaryEntry.date,
+      weather: parsedDiaryEntry.weather,
+      visibility: parsedDiaryEntry.visibility,
+      comment: parsedDiaryEntry.comment
+    }
+
+    const filter = { _id: id }
+
+    console.log('updatedDiaryEntry: ')
+    console.log(updatedDiaryEntry)
+
+    return await Diary.findByIdAndUpdate(filter, updatedDiaryEntry).then(() => {
+      return updatedDiaryEntry
+    }).catch((e: any) => {
+      console.log(e)
+      throw new Error(e)
+    })
+  })
+}
+
+export async function deleteDiary (id: string): Promise<IDiaryEntry | any> {
+  return await connect(DB_URL + '/' + DB_NAME).then(async () => {
+    const filter = { _id: id }
+
+    return await Diary.findByIdAndDelete(filter).then((deletedEntry) => {
+      return deletedEntry
+    }).catch((e: any) => {
+      console.log(e)
+      throw new Error(e)
+    })
+  })
+}

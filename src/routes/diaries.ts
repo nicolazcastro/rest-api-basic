@@ -57,4 +57,41 @@ router.post('/', (req, res) => {
   }
 })
 
+router.patch('/:id', (req, res) => {
+  try {
+    const parsedDiaryEntry = toNewDiaryEntry(req.body)
+    console.log(parsedDiaryEntry)
+
+    diaryServices.updateDiary(req.params.id, parsedDiaryEntry).then((diary) => {
+      console.log('Result from added new entry: ')
+      console.log(diary)
+      return (diary != null) ? res.send(diary) : res.sendStatus(200)
+    }).catch((e: any) => {
+      console.log(e)
+      throw new Error(e)
+    })
+  } catch (e: any) {
+    res.status(400).send(e.message)
+  }
+})
+
+router.delete('/:id', (req, res) => {
+  try {
+    diaryServices.deleteDiary(req.params.id).then((diary) => {
+      console.log('Result from deleted entry: ')
+      console.log(diary)
+      if (diary != null) {
+        res.status(200).send(diary)
+      } else {
+        res.sendStatus(404)
+      }
+    }).catch((e: any) => {
+      console.log(e)
+      throw new Error(e)
+    })
+  } catch (e: any) {
+    res.status(400).send(e.message)
+  }
+})
+
 export default router
