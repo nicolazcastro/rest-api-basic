@@ -96,7 +96,7 @@ export async function addDiary (parsedDiaryEntry: INewDiaryEntry): Promise<IDiar
       comment: parsedDiaryEntry.comment
     })
 
-    console.log('newDiaryEntry: ')
+    console.log('New Diary Entry: ')
     console.log(newDiaryEntry)
 
     return await newDiaryEntry.save().then(() => {
@@ -119,7 +119,7 @@ export async function updateDiary (id: string, parsedDiaryEntry: INewDiaryEntry)
 
     const filter = { _id: id }
 
-    console.log('updatedDiaryEntry: ')
+    console.log('Updated Diary Entry: ')
     console.log(updatedDiaryEntry)
 
     return await Diary.findByIdAndUpdate(filter, updatedDiaryEntry).then(() => {

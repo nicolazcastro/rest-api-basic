@@ -1,10 +1,11 @@
 import express from 'express'
 import * as diaryServices from '../services/diariesServices'
 import toNewDiaryEntry from '../services/utils'
+import * as Auth from './../middlewares/auth.middleware'
 
 const router = express.Router()
 
-router.get('/', (_req, res) => {
+router.route('/').get(Auth.authorize(['getEntries']), (_req, res) => {
   diaryServices.getEntries().then((diaries) => {
     console.log('Result from service: ')
     console.log(diaries)
@@ -15,7 +16,7 @@ router.get('/', (_req, res) => {
   })
 })
 
-router.get('/:id', (req, res) => {
+router.route('/:id').get(Auth.authorize(['findByIdWithoutSensitiveInfo']), (req, res) => {
   console.log(req.params.id)
   diaryServices.findByIdWithoutSensitiveInfo(req.params.id).then((diary) => {
     console.log('Result from service: ')
@@ -27,7 +28,7 @@ router.get('/:id', (req, res) => {
   })
 })
 
-router.get('/full/:id', (req, res) => {
+router.route('/full/:id').get(Auth.authorize(['findById']), (req, res) => {
   console.log(req.params.id)
   diaryServices.findById(req.params.id).then((diary) => {
     console.log('Result from service: ')
@@ -39,7 +40,7 @@ router.get('/full/:id', (req, res) => {
   })
 })
 
-router.post('/', (req, res) => {
+router.route('/').post(Auth.authorize(['addDiary']), (req, res) => {
   try {
     const parsedDiaryEntry = toNewDiaryEntry(req.body)
     console.log(parsedDiaryEntry)
@@ -57,7 +58,7 @@ router.post('/', (req, res) => {
   }
 })
 
-router.patch('/:id', (req, res) => {
+router.route('/:id').patch(Auth.authorize(['updateDiary']), (req, res) => {
   try {
     const parsedDiaryEntry = toNewDiaryEntry(req.body)
     console.log(parsedDiaryEntry)
@@ -75,7 +76,7 @@ router.patch('/:id', (req, res) => {
   }
 })
 
-router.delete('/:id', (req, res) => {
+router.route('/:id').delete(Auth.authorize(['deleteDiary']), (req, res) => {
   try {
     diaryServices.deleteDiary(req.params.id).then((diary) => {
       console.log('Result from deleted entry: ')
