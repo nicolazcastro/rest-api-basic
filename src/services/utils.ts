@@ -1,5 +1,4 @@
-import { Weather, Visibility } from './enums'
-import { NewDiaryEntry } from './types'
+import { Weather, Visibility } from '../enums'
 
 const parseComment = (commentFromRequest: any): string => {
   if (!isString(commentFromRequest)) {
@@ -21,15 +20,14 @@ const parseWeather = (weatherFromRequest: any): Weather => {
   return weatherFromRequest
 }
 
-const isWeather = (param: any): boolean => {
-  return Object.values(Weather).includes(param)
-}
-
 const parseVisibility = (visibilityFromRequest: any): Visibility => {
   if (!isString(visibilityFromRequest) || !isVisibility(visibilityFromRequest)) {
     throw new Error('Incorrect or missing visibility')
   }
   return visibilityFromRequest
+}
+const isWeather = (param: any): boolean => {
+  return Object.values(Weather).includes(param)
 }
 
 const isVisibility = (param: any): boolean => {
@@ -44,8 +42,8 @@ const isDate = (date: string): boolean => {
   return Boolean(Date.parse(date))
 }
 
-const toNewDiaryEntry = (object: any): NewDiaryEntry => {
-  const newEntry: NewDiaryEntry = {
+const toNewDiaryEntry = (object: any): any => {
+  const newEntry = {
     comment: parseComment(object.comment),
     date: parseDate(object.date),
     weather: parseWeather(object.weather),

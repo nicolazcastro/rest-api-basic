@@ -9,8 +9,6 @@ export interface IDiaryEntry extends Document{
   comment?: string
 }
 
-export interface INonSensitiveInfoDiaryEntry extends Omit<IDiaryEntry, 'comment'>{}
-
 export const DiarySchema: Schema = new Schema({
   date: { type: String, required: true },
   weather: { type: String, required: true },
@@ -19,6 +17,6 @@ export const DiarySchema: Schema = new Schema({
   id: { type: Schema.Types.ObjectId, ref: 'id' }
 })
 
-export type NonSensitiveInfoDiaryEntry = Omit<INonSensitiveInfoDiaryEntry, 'comment'>
+export interface INonSensitiveInfoDiaryEntry extends Omit<IDiaryEntry, 'comment'>{}
+export interface INewDiaryEntry extends Omit<IDiaryEntry, 'id'>{}
 export type NewDiaryEntry = Omit<IDiaryEntry, 'id'>
-export type DiaryEntry = IDiaryEntry

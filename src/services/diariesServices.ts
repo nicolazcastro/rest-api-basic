@@ -1,16 +1,13 @@
-import { DiarySchema, IDiaryEntry, INonSensitiveInfoDiaryEntry } from '../models/diary'
-import { DiaryEntry, NewDiaryEntry } from '../types'
-import diaryData from './diaries.json'
+import { DiarySchema, IDiaryEntry, INewDiaryEntry, INonSensitiveInfoDiaryEntry } from '../models/diary'
 import dotenv from 'dotenv'
 import { connect, model } from 'mongoose'
 
 dotenv.config()
 const DB_URL: string = process.env.DB_URL as string
 const DB_NAME: string = process.env.DB_NAME as string
-const diaries: DiaryEntry[] = diaryData as DiaryEntry[]
 const Diary = model<IDiaryEntry>('diaries', DiarySchema)
 
-export async function getEntries (): Promise<DiaryEntry[] | any> {
+export async function getEntries (): Promise<IDiaryEntry[] | any> {
   return await connect(DB_URL + '/' + DB_NAME).then(async () => {
     return await Diary.find().then((entries: INonSensitiveInfoDiaryEntry[] | null) => {
       console.log('Result from DB: ')
@@ -43,7 +40,7 @@ export async function getEntries (): Promise<DiaryEntry[] | any> {
   })
 }
 
-export async function findByIdWithoutSensitiveInfo (id: string): Promise<DiaryEntry | any> {
+export async function findByIdWithoutSensitiveInfo (id: string): Promise<IDiaryEntry | any> {
   return await connect(DB_URL + '/' + DB_NAME).then(async () => {
     return await Diary.findById(id).then((entry: INonSensitiveInfoDiaryEntry | null) => {
       console.log('Result from DB: ')
@@ -71,7 +68,7 @@ export async function findByIdWithoutSensitiveInfo (id: string): Promise<DiaryEn
   })
 }
 
-export async function findById (id: string): Promise<DiaryEntry | any> {
+export async function findById (id: string): Promise<IDiaryEntry | any> {
   return await connect(DB_URL + '/' + DB_NAME).then(async () => {
     return await Diary.findById(id).then((entry: INonSensitiveInfoDiaryEntry | null) => {
       console.log('Result from DB: ')
@@ -90,12 +87,23 @@ export async function findById (id: string): Promise<DiaryEntry | any> {
   })
 }
 
-export const addDiary = (newDiaryEntry: NewDiaryEntry): DiaryEntry => {
-  const newDiary = {
-    id: Math.max(...diaries.map(d => d.id)) + 1,
-    ...newDiaryEntry
-  }
+export async function addDiary (parsedDiaryEntry: INewDiaryEntry): Promise<IDiaryEntry | any> {
+  return await connect(DB_URL + '/' + DB_NAME).then(async () => {
+    const newDiaryEntry: INewDiaryEntry = new Diary({
+      date: parsedDiaryEntry.date,
+      weather: parsedDiaryEntry.weather,
+      visibility: parsedDiaryEntry.visibility,
+      comment: parsedDiaryEntry.comment
+    })
 
-  diaries.push(newDiary)
-  return newDiary
+    console.log('newDiaryEntry: ')
+    console.log(newDiaryEntry)
+
+    return await newDiaryEntry.save().then(() => {
+      return newDiaryEntry
+    }).catch((e: any) => {
+      console.log(e)
+      throw new Error(e)
+    })
+  })
 }
