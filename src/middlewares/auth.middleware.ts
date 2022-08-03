@@ -5,7 +5,6 @@ export const authorize = (allowedAccessTypes: string[]) => async (req: Request, 
   try {
     let jwt = req.headers.authorization
 
-    // verify request has token
     if (jwt == null) {
       return res.status(401).json({ message: 'Invalid token ' })
     }
@@ -31,6 +30,6 @@ export const authorize = (allowedAccessTypes: string[]) => async (req: Request, 
       return
     }
 
-    res.status(500).json({ message: 'Failed to authenticate user' })
+    res.status(500).json({ message: 'Failed to authenticate user', error: error })
   }
 }

@@ -1,55 +1,47 @@
 import { sign, SignOptions, verify, VerifyOptions } from 'jsonwebtoken'
 import * as fs from 'fs'
+import dotenv from 'dotenv'
 import * as path from 'path'
+import { TokenPayload } from '../types/types'
 
-const keyFile = './../../private.key'
+dotenv.config()
 
-export function generateToken (): any {
-  const payload = {
-    name: 'John Doe',
-    userId: 123,
-    accessTypes: [
-      'getEntries',
-      'findByIdWithoutSensitiveInfo',
-      'findById',
-      'addDiary',
-      'updateDiary',
-      'deleteDiary'
-    ]
-  }
+const passphrase: string = process.env.TOKEN_PASSPFRASE as string
+const kid: string = process.env.KEY_ID as string
+const issuer: string = process.env.KEY_ISSUER as string
 
-  const privateKey = {
-    key: fs.readFileSync(path.join(__dirname, keyFile), 'utf8'),
-    passphrase: 'suhcyhvcahya'
-  }
+const privateKeyFile = './../keys/.private.key'
+const publicKeyFile = './../keys/.public.key.pem'
 
-  const signInOptions: SignOptions = {
-    algorithm: 'RS256',
-    expiresIn: '1h'
-  }
+const privateKey = fs.readFileSync(path.join(__dirname, privateKeyFile), 'utf8')
 
-  return sign(payload, privateKey, signInOptions)
+const publicKey = fs.readFileSync(path.join(__dirname, publicKeyFile), 'utf8')
+
+const signInOptions: SignOptions = {
+  algorithm: 'RS256',
+  expiresIn: '1 day',
+  issuer,
+  keyid: kid
 }
 
-interface TokenPayload {
-  exp: number
-  accessTypes: string[]
-  name: string
-  userId: number
+export function generateToken (payload: any): string {
+  return sign(payload, {
+    key: privateKey,
+    passphrase
+  }, signInOptions)
 }
 
 export async function validateToken (token: string): Promise<TokenPayload> {
-  const publicKey = fs.readFileSync(path.join(__dirname, keyFile))
-
   const verifyOptions: VerifyOptions = {
-    algorithms: ['RS256']
+    issuer,
+    algorithms: ['RS256'],
+    maxAge: '1 day'
   }
 
   return await new Promise((resolve, reject) => {
     verify(token, publicKey, verifyOptions, (error: any, decoded: any) => {
-      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-      if (error) return reject(error)
-
+      console.log(error)
+      if (error != null) return reject(error)
       resolve(decoded)
     })
   })

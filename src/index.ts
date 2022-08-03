@@ -1,14 +1,31 @@
 import express from 'express'
 import diaryRouter from './routes/diaries'
 import { generateToken } from './utils/jwt.utils'
+import { TokenPayload } from './types/types'
 
 const app = express()
 app.use(express.json())
 
 const PORT = 3000
 
+/*
+This is for testing purposes
+*/
 if (process.env.NODE_ENV !== 'production') {
-  console.log('JWT', generateToken())
+  const payload: TokenPayload = {
+    exp: 1,
+    name: 'John Doe',
+    userId: 123,
+    accessTypes: [
+      'getEntries',
+      'findByIdWithoutSensitiveInfo',
+      'findById',
+      'addDiary',
+      'updateDiary',
+      'deleteDiary'
+    ]
+  }
+  console.log('JWT', generateToken(payload))
 }
 
 app.get('/ping', (_req, res) => {

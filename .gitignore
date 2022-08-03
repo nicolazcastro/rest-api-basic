@@ -1,5 +1,5 @@
 node_modules/
 build/
 .env
-private.key
-public.key
+src/keys/.private.key
+src/keys/.public.key.pem
