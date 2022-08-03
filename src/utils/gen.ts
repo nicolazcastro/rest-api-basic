@@ -21,7 +21,6 @@ const { publicKey, privateKey } = generateKeyPairSync('rsa', {
 })
 
 const privateKeyFile = './../keys/.private.key'
-
 const publicKeyFile = './../keys/.public.key.pem'
 
 writeFileSync(join(__dirname, privateKeyFile), privateKey)

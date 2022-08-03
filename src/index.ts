@@ -13,7 +13,6 @@ This is for testing purposes
 */
 if (process.env.NODE_ENV !== 'production') {
   const payload: TokenPayload = {
-    exp: 1,
     name: 'John Doe',
     userId: 123,
     accessTypes: [
