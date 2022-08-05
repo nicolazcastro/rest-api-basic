@@ -26,11 +26,13 @@
   },
   "dependencies": {
     "@types/mongoose": "^5.11.97",
+    "@types/validator": "^13.7.5",
     "dotenv": "^16.0.1",
     "express": "4.17.1",
     "find-config": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
-    "mongose": "^0.0.2-security"
+    "mongose": "^0.0.2-security",
+    "validator": "^13.7.0"
   },
   "eslintConfig": {
     "parserOptions": {

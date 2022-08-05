@@ -1,4 +1,5 @@
 import { Weather, Visibility } from '../models/enums'
+import validator from 'validator'
 
 const parseComment = (commentFromRequest: any): string => {
   if (!isString(commentFromRequest)) {
@@ -39,7 +40,7 @@ const isString = (string: string): boolean => {
 }
 
 const isDate = (date: string): boolean => {
-  return Boolean(Date.parse(date))
+  return validator.isDate(date)
 }
 
 const toNewDiaryEntry = (object: any): any => {

@@ -1,7 +1,6 @@
-
 import * as diaryServices from '../services/diariesServices'
 import { Request, Response } from 'express'
-import toNewDiaryEntry from '../services/utils'
+import toNewDiaryEntry from '../services/diaryUtils'
 
 export function getEntries (_req: Request, res: Response): void {
   diaryServices.getEntries().then((diaries) => {

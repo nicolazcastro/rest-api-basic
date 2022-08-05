@@ -60,9 +60,7 @@ export async function findByIdWithoutSensitiveInfo (id: string): Promise<IDiaryE
       console.log(e)
       throw new Error(e)
     })
-  }
-
-  ).catch((e: any) => {
+  }).catch((e: any) => {
     console.log(e)
     throw new Error(e)
   })

@@ -12,3 +12,8 @@ export enum Visibility{
   Ok = 'ok',
   Poor = 'poor'
 }
+
+export enum Profile{
+  Admin = 'admin',
+  User = 'user'
+}
