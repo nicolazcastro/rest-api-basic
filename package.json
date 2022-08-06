@@ -27,6 +27,8 @@
   "dependencies": {
     "@types/mongoose": "^5.11.97",
     "@types/validator": "^13.7.5",
+    "bcrypt": "5.0.1",
+    "@types/bcrypt": "5.0.0",
     "dotenv": "^16.0.1",
     "express": "4.17.1",
     "find-config": "^1.0.0",

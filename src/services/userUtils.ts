@@ -1,5 +1,6 @@
 import { Profile } from '../models/enums'
 import validator from 'validator'
+import bcrypt from 'bcrypt'
 import { getNextUserId } from '../services/usersServices'
 
 const parseName = (nameFromRequest: any): string => {
@@ -8,11 +9,11 @@ const parseName = (nameFromRequest: any): string => {
   }
   return nameFromRequest
 }
-const parsePassword = (passwordFromRequest: any): string => {
+const parsePassword = async (passwordFromRequest: any): Promise<any> => {
   if (!isString(passwordFromRequest) || !isPassword(passwordFromRequest)) {
     throw new Error('Incorrect or missing pasword')
   }
-  return passwordFromRequest
+  return await bcrypt.hash(passwordFromRequest, 5)
 }
 const parseEmail = (emailFromRequest: any): string => {
   if (!isEmail(emailFromRequest) || !isString(emailFromRequest)) {
@@ -56,23 +57,18 @@ const isPassword = (string: string): boolean => {
 const isEmail = (email: string): boolean => {
   return validator.isEmail(email)
 }
-let newUserId: number = 0
+
 const toNewUserEntry = async (object: any): Promise<any> => {
-  return await getNextUserId().then((newId) => {
-    newUserId = newId
-    const newEntry = {
-      name: parseName(object.name),
-      userId: newUserId,
-      email: parseEmail(object.email),
-      profile: parseProfile(object.profile),
-      enabled: true,
-      password: parsePassword(object.password)
-    }
-    return newEntry
-  }).catch((e: any) => {
-    console.log(e)
-    throw new Error(e)
-  })
+  const newId = await getNextUserId()
+  const newEntry = {
+    name: parseName(object.name),
+    userId: newId,
+    email: parseEmail(object.email),
+    profile: parseProfile(object.profile),
+    enabled: true,
+    password: parsePassword(object.password)
+  }
+  return newEntry
 }
 
 export default toNewUserEntry

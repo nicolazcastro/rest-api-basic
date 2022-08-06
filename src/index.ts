@@ -25,7 +25,7 @@ if (process.env.NODE_ENV !== 'production') {
       'deleteDiary'
     ]
   }
-  console.log('JWT', generateToken(payload))
+  console.log('JWT Token: ', generateToken(payload))
 }
 
 app.get('/ping', (_req, res) => {

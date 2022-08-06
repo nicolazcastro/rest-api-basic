@@ -1,4 +1,4 @@
-import { sign, SignOptions, verify, VerifyOptions } from 'jsonwebtoken'
+import { sign, SignOptions, verify, VerifyOptions, decode } from 'jsonwebtoken'
 import * as fs from 'fs'
 import dotenv from 'dotenv'
 import * as path from 'path'
@@ -22,6 +22,10 @@ const signInOptions: SignOptions = {
   expiresIn: '1 day',
   issuer,
   keyid: kid
+}
+
+export function decodeToken (token: string): any {
+  return decode(token)
 }
 
 export function generateToken (payload: any): string {

@@ -7,6 +7,7 @@ export interface IUser extends Document{
   enabled: boolean
   profile: string
   password: string
+  token: string
   userId: number
 }
 
@@ -16,6 +17,7 @@ export const UserSchema: Schema = new Schema({
   enabled: { type: Boolean, required: true },
   profile: { type: String, required: true },
   password: { type: String, required: true },
+  token: { type: String, required: false },
   userId: { type: Number, required: true },
   id: { type: Schema.Types.ObjectId, ref: 'id' }
 })
