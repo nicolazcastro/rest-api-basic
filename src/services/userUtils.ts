@@ -13,7 +13,8 @@ const parsePassword = async (passwordFromRequest: any): Promise<any> => {
   if (!isString(passwordFromRequest) || !isPassword(passwordFromRequest)) {
     throw new Error('Incorrect or missing pasword')
   }
-  return await bcrypt.hash(passwordFromRequest, 5)
+  const salt = await bcrypt.genSalt(6)
+  return await bcrypt.hash(passwordFromRequest, salt)
 }
 const parseEmail = (emailFromRequest: any): string => {
   if (!isEmail(emailFromRequest) || !isString(emailFromRequest)) {
@@ -60,13 +61,14 @@ const isEmail = (email: string): boolean => {
 
 const toNewUserEntry = async (object: any): Promise<any> => {
   const newId = await getNextUserId()
+  const pass = await parsePassword(object.password)
   const newEntry = {
     name: parseName(object.name),
     userId: newId,
     email: parseEmail(object.email),
     profile: parseProfile(object.profile),
     enabled: true,
-    password: parsePassword(object.password)
+    password: pass
   }
   return newEntry
 }

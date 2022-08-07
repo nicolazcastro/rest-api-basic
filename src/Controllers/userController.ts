@@ -6,14 +6,17 @@ import { decodeToken } from '../utils/jwt.utils'
 
 export async function register (req: Request, res: Response): Promise<void> {
   try {
-    const parsedUserEntry = await toNewUserEntry(req.body)
-    console.log('New User to register')
-    console.log(parsedUserEntry)
-
-    userServices.register(parsedUserEntry).then((user) => {
-      console.log('Result from added new entry: ')
-      console.log(user)
-      return (user != null) ? res.send(user) : res.sendStatus(201)
+    await toNewUserEntry(req.body).then((parsedUserEntry) => {
+      userServices.register(parsedUserEntry).then((user) => {
+        console.log('Result from added new entry: ')
+        console.log(user)
+        console.log('New User to register')
+        console.log(parsedUserEntry)
+        return (user != null) ? res.send(user) : res.sendStatus(201)
+      }).catch((e: any) => {
+        console.log(e)
+        throw new Error(e)
+      })
     }).catch((e: any) => {
       console.log(e)
       throw new Error(e)
@@ -48,10 +51,8 @@ export async function me (req: Request, res: Response): Promise<void> {
     }
 
     const decodedToken = decodeToken(token)
-    if (typeof decodedToken.userId !== 'number') {
-      userServices.findById(decodedToken.userId).then((user) => {
-        console.log('Result from added new entry: ')
-        console.log(user)
+    if (typeof decodedToken.userId === 'number') {
+      userServices.findMeByUserId(decodedToken.userId).then((user) => {
         return (user != null) ? res.send(user) : res.sendStatus(201)
       }).catch((e: any) => {
         console.log(e)

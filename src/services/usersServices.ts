@@ -98,6 +98,28 @@ export async function findByEmail (email: string): Promise<IUser | any> {
   })
 }
 
+export async function findMeByUserId (userId: string): Promise<IUser | any> {
+  return await connect(DB_URL + '/' + DB_NAME).then(async () => {
+    return await User.findOne({ userId }).then((entry: IUser | null) => {
+      const obj: Partial<IUser> = {
+        userId: entry?.userId,
+        name: entry?.name,
+        email: entry?.email,
+        profile: entry?.profile
+      }
+      return obj
+    }).catch((e: any) => {
+      console.log(e)
+      throw new Error(e)
+    })
+  }
+
+  ).catch((e: any) => {
+    console.log(e)
+    throw new Error(e)
+  })
+}
+
 export async function findById (id: string): Promise<IUser | any> {
   return await connect(DB_URL + '/' + DB_NAME).then(async () => {
     return await User.findById(id).then((entry: IUser | null) => {
