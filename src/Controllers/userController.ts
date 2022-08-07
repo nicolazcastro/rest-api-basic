@@ -6,17 +6,27 @@ import { decodeToken } from '../utils/jwt.utils'
 
 export async function register (req: Request, res: Response): Promise<void> {
   try {
-    await toNewUserEntry(req.body).then((parsedUserEntry) => {
-      userServices.register(parsedUserEntry).then((user) => {
-        console.log('Result from added new entry: ')
-        console.log(user)
-        console.log('New User to register')
-        console.log(parsedUserEntry)
-        return (user != null) ? res.send(user) : res.sendStatus(201)
-      }).catch((e: any) => {
-        console.log(e)
-        throw new Error(e)
-      })
+    userServices.findByEmail(req.body.email).then(async (user) => {
+      if (user !== null) {
+        return res.status(409).send('Email Already in use')
+      } else {
+        await toNewUserEntry(req.body).then((parsedUserEntry) => {
+          userServices.register(parsedUserEntry).then((user) => {
+            console.log('Result from added new entry: ')
+            console.log(user)
+            console.log('New User to register')
+            console.log(parsedUserEntry)
+            return (user != null) ? res.send(user) : res.sendStatus(201)
+          }).catch((e: any) => {
+            console.log(e)
+            throw new Error(e)
+          })
+        }).catch((e: any) => {
+          console.log(e)
+          throw new Error(e)
+        })
+        throw new Error('Invalid Data')
+      }
     }).catch((e: any) => {
       console.log(e)
       throw new Error(e)

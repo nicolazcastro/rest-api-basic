@@ -15,7 +15,7 @@ This is for testing purposes
 if (process.env.NODE_ENV !== 'production') {
   const payload: TokenPayload = {
     name: 'John Doe',
-    userId: 123,
+    userId: 1,
     accessTypes: [
       'getEntries',
       'findByIdWithoutSensitiveInfo',
