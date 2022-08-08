@@ -10,7 +10,7 @@ export async function register (req: Request, res: Response): Promise<void> {
       if (user !== null) {
         return res.status(409).send('Email Already in use')
       } else {
-        await toNewUserEntry(req.body).then((parsedUserEntry) => {
+        return await toNewUserEntry(req.body).then((parsedUserEntry) => {
           userServices.register(parsedUserEntry).then((user) => {
             console.log('Result from added new entry: ')
             console.log(user)
@@ -25,7 +25,6 @@ export async function register (req: Request, res: Response): Promise<void> {
           console.log(e)
           throw new Error(e)
         })
-        throw new Error('Invalid Data')
       }
     }).catch((e: any) => {
       console.log(e)

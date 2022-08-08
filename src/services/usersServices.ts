@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import { connect, model } from 'mongoose'
 import { TokenPayload } from '../types/types'
 import { generateToken } from '../utils/jwt.utils'
+import { AccessTypes, AdminAccessTypes } from '../models/enums'
 
 dotenv.config()
 const DB_URL: string = process.env.DB_URL as string
@@ -35,46 +36,54 @@ export const getNextUserId = async (): Promise<number | any> => {
 
 export async function login (email: string, password: string): Promise<string | null> {
   try {
-    if (!((email.length > 0) && (password.length > 0))) {
-      return null
-    }
+    if ((email.length > 0) && (password.length > 0)) {
+      return await connect(DB_URL + '/' + DB_NAME).then(async () => {
+        console.log('Conection ok')
+        return await User.findOne({ email }).then(async (user: IUser | null) => {
+          if (user == null) {
+            return null
+          }
 
-    const user = await User.findOne({ email })
+          const passMatch = await bcrypt.compare(password, user.password)
 
-    if ((user != null) && (Boolean((await bcrypt.compare(password, user.password))))) {
-      let accessTypes: string[] = []
+          if ((user != null) && passMatch) {
+            let accessTypes: string[] = []
 
-      const userTypes: string[] = [
-        'getEntries',
-        'findByIdWithoutSensitiveInfo',
-        'findById',
-        'me'
-      ]
+            const userTypes = Object.values(AccessTypes) as any[]
+            const adminUserTypes = Object.values(AdminAccessTypes) as any[]
 
-      if (user.profile === 'admin') {
-        accessTypes = [
-          'addDiary',
-          'updateDiary',
-          'deleteDiary',
-          ...userTypes
-        ]
-      } else {
-        accessTypes = userTypes
-      }
+            if (user.profile === 'admin') {
+              accessTypes = adminUserTypes
+            } else {
+              accessTypes = userTypes
+            }
 
-      const payload: TokenPayload = {
-        name: user.name,
-        userId: user.userId,
-        accessTypes
-      }
+            const payload: TokenPayload = {
+              name: user.name,
+              userId: user.userId,
+              accessTypes
+            }
 
-      const token = generateToken(payload)
-      return (token.length > 0) ? token : null
+            return generateToken(payload)
+          } else {
+            console.log('password invalid for: ' + email)
+            return null
+          }
+        }).catch((e: any) => {
+          console.log('user not found', e)
+          throw new Error(e)
+        })
+      }).catch((e: any) => {
+        console.log(e)
+        throw new Error(e)
+      })
     } else {
+      console.log('Invalid Data')
       return null
     }
-  } catch (err) {
-    console.log(err)
+  } catch (e: any) {
+    console.log('error')
+    console.log(e.message)
     return null
   }
 }
@@ -90,9 +99,7 @@ export async function findByEmail (email: string): Promise<IUser | any> {
       console.log(e)
       throw new Error(e)
     })
-  }
-
-  ).catch((e: any) => {
+  }).catch((e: any) => {
     console.log(e)
     throw new Error(e)
   })
@@ -149,11 +156,8 @@ export async function register (parsedUserEntry: INewUserEntry): Promise<IUser |
       password: parsedUserEntry.password,
       profile: parsedUserEntry.profile
     })
-
-    console.log('New User: ')
-    console.log(newUserEntry)
-
     return await newUserEntry.save().then(() => {
+      console.log('user saved')
       return newUserEntry
     }).catch((e: any) => {
       console.log(e)

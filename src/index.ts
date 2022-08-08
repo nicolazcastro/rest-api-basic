@@ -3,6 +3,7 @@ import diaryRouter from './routes/diaries'
 import userRouter from './routes/users'
 import { generateToken } from './utils/jwt.utils'
 import { TokenPayload } from './types/types'
+import { AccessTypes } from './models/enums'
 
 const app = express()
 app.use(express.json())
@@ -13,17 +14,11 @@ const PORT = 3000
 This is for testing purposes
 */
 if (process.env.NODE_ENV !== 'production') {
+  const userTypes = Object.values(AccessTypes) as any[]
   const payload: TokenPayload = {
     name: 'John Doe',
     userId: 1,
-    accessTypes: [
-      'getEntries',
-      'findByIdWithoutSensitiveInfo',
-      'findById',
-      'addDiary',
-      'updateDiary',
-      'deleteDiary'
-    ]
+    accessTypes: userTypes
   }
   console.log('JWT Token: ', generateToken(payload))
 }
