@@ -1,7 +1,7 @@
 
-import * as userServices from '../services/usersServices'
+import * as userServices from '../services/users/usersServices'
 import { Request, Response } from 'express'
-import toNewUserEntry from '../services/userUtils'
+import toNewUserEntry from '../services/users/userUtils'
 import { decodeToken } from '../utils/jwt.utils'
 
 export async function register (req: Request, res: Response): Promise<void> {

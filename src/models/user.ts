@@ -1,7 +1,6 @@
 import { Schema, Document } from 'mongoose'
 
 export interface IUser extends Document{
-  id: string
   name: string
   email: string
   enabled: boolean
@@ -18,8 +17,7 @@ export const UserSchema: Schema = new Schema({
   profile: { type: String, required: true },
   password: { type: String, required: true },
   token: { type: String, required: false },
-  userId: { type: Number, required: true, unique: true },
-  id: { type: Schema.Types.ObjectId, ref: 'id' }
+  userId: { type: Number, required: true, unique: true }
 })
 
 export interface INewUserEntry extends Omit<IUser, 'id'>{}

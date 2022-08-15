@@ -1,6 +1,6 @@
-import * as diaryServices from '../services/diariesServices'
+import * as diaryServices from '../services/diaries/diariesServices'
 import { Request, Response } from 'express'
-import toNewDiaryEntry from '../services/diaryUtils'
+import toNewDiaryEntry from '../services/diaries/diaryUtils'
 
 export function getEntries (_req: Request, res: Response): void {
   diaryServices.getEntries().then((diaries) => {
@@ -37,7 +37,7 @@ export function findById (req: Request, res: Response): void {
   })
 }
 
-export function addDiary (req: Request, res: Response): void {
+export async function addDiary (req: Request, res: Response): Promise<void> {
   try {
     const parsedDiaryEntry = toNewDiaryEntry(req.body)
     console.log(parsedDiaryEntry)
@@ -48,7 +48,7 @@ export function addDiary (req: Request, res: Response): void {
       return (diary != null) ? res.send(diary) : res.sendStatus(201)
     }).catch((e: any) => {
       console.log(e)
-      throw new Error(e)
+      return res.status(400).send(e.message)
     })
   } catch (e: any) {
     res.status(400).send(e.message)

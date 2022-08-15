@@ -19,7 +19,7 @@ const publicKey = fs.readFileSync(path.join(__dirname, publicKeyFile), 'utf8')
 
 const signInOptions: SignOptions = {
   algorithm: 'RS256',
-  expiresIn: '1 day',
+  expiresIn: '365 day',
   issuer,
   keyid: kid
 }

@@ -1,8 +1,14 @@
-import { Weather, Visibility } from '../models/enums'
+import { Weather, Visibility } from '../../models/enums'
 import validator from 'validator'
 
+const parseUser = (userFromRequest: any): string => {
+  if (!isString(userFromRequest) || userFromRequest === '') {
+    throw new Error('Incorrect or missing user')
+  }
+  return userFromRequest
+}
 const parseComment = (commentFromRequest: any): string => {
-  if (!isString(commentFromRequest)) {
+  if (!isString(commentFromRequest) || commentFromRequest === '') {
     throw new Error('Incorrect or missing comment')
   }
   return commentFromRequest
@@ -48,7 +54,8 @@ const toNewDiaryEntry = (object: any): any => {
     comment: parseComment(object.comment),
     date: parseDate(object.date),
     weather: parseWeather(object.weather),
-    visibility: parseVisibility(object.visibility)
+    visibility: parseVisibility(object.visibility),
+    userId: parseUser(object.userId)
   }
 
   return newEntry

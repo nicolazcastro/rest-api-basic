@@ -1,10 +1,10 @@
-import { UserSchema, IUser, INewUserEntry } from '../models/user'
+import { UserSchema, IUser, INewUserEntry } from '../../models/user'
 import bcrypt from 'bcrypt'
 import dotenv from 'dotenv'
 import { connect, model } from 'mongoose'
-import { TokenPayload } from '../types/types'
-import { generateToken } from '../utils/jwt.utils'
-import { AccessTypes, AdminAccessTypes } from '../models/enums'
+import { TokenPayload } from '../../types/types'
+import { generateToken } from '../../utils/jwt.utils'
+import { AccessTypes, AdminAccessTypes } from '../../models/enums'
 
 dotenv.config()
 const DB_URL: string = process.env.DB_URL as string
@@ -86,6 +86,23 @@ export async function login (email: string, password: string): Promise<string | 
     console.log(e.message)
     return null
   }
+}
+
+export async function findByUserId (userId: number): Promise<IUser | any> {
+  return await connect(DB_URL + '/' + DB_NAME).then(async () => {
+    return await User.findOne({ userId }).then((entry: IUser | null) => {
+      // console.log('Result from DB: ')
+      // console.log(entry)
+
+      return entry
+    }).catch((e: any) => {
+      console.log(e)
+      throw new Error(e)
+    })
+  }).catch((e: any) => {
+    console.log(e)
+    throw new Error(e)
+  })
 }
 
 export async function findByEmail (email: string): Promise<IUser | any> {

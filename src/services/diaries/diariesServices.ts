@@ -1,6 +1,7 @@
-import { DiarySchema, IDiaryEntry, INewDiaryEntry, INonSensitiveInfoDiaryEntry } from '../models/diary'
+import { DiarySchema, IDiaryEntry, INewDiaryEntry, INonSensitiveInfoDiaryEntry, IParsedDiaryEntry, DiaryUser } from '../../models/diary'
 import dotenv from 'dotenv'
 import { connect, model } from 'mongoose'
+import * as userServices from '../users/usersServices'
 
 dotenv.config()
 const DB_URL: string = process.env.DB_URL as string
@@ -10,17 +11,19 @@ const Diary = model<IDiaryEntry>('diaries', DiarySchema)
 export async function getEntries (): Promise<IDiaryEntry[] | any> {
   return await connect(DB_URL + '/' + DB_NAME).then(async () => {
     return await Diary.find().then((entries: INonSensitiveInfoDiaryEntry[] | null) => {
-      console.log('Result from DB: ')
-      console.log(entries)
+      // console.log('Result from DB: ')
+      // console.log(entries)
       if (entries == null) {
         return entries
       } else {
         const objs: any[] = []
         entries.forEach(element => {
           const obj: Partial<INonSensitiveInfoDiaryEntry> = {
-            id: element._id,
+            id: element._id.valueOf(),
             date: element.date,
             weather: element.weather,
+            user: element.user,
+            userId: element.userId,
             visibility: element.visibility
           }
           objs.push(obj)
@@ -49,9 +52,10 @@ export async function findByIdWithoutSensitiveInfo (id: string): Promise<IDiaryE
         return entry
       } else {
         const obj: Partial<INonSensitiveInfoDiaryEntry> = {
-          id: entry._id,
+          id: entry._id.valueOf(),
           date: entry.date,
           weather: entry.weather,
+          user: entry.user,
           visibility: entry.visibility
         }
         return obj
@@ -85,12 +89,20 @@ export async function findById (id: string): Promise<IDiaryEntry | any> {
   })
 }
 
-export async function addDiary (parsedDiaryEntry: INewDiaryEntry): Promise<IDiaryEntry | any> {
+export async function addDiary (parsedDiaryEntry: IParsedDiaryEntry): Promise<IDiaryEntry | any> {
   return await connect(DB_URL + '/' + DB_NAME).then(async () => {
+    const user = await userServices.findByUserId(parsedDiaryEntry.userId)
+
+    if (user === null) {
+      throw new Error('User does not exist')
+    }
+
     const newDiaryEntry: INewDiaryEntry = new Diary({
       date: parsedDiaryEntry.date,
       weather: parsedDiaryEntry.weather,
       visibility: parsedDiaryEntry.visibility,
+      userId: parsedDiaryEntry.userId,
+      user: user._Id,
       comment: parsedDiaryEntry.comment
     })
 
@@ -126,6 +138,27 @@ export async function updateDiary (id: string, parsedDiaryEntry: INewDiaryEntry)
       console.log(e)
       throw new Error(e)
     })
+  })
+}
+
+export async function setDiaryUser (diary: IDiaryEntry): Promise<void> {
+  await userServices.findByUserId(diary.userId).then(async (user) => {
+    console.log('Result from user service: ', user.userId)
+
+    const diaryUser: DiaryUser = {
+      type: user._id,
+      ref: 'IUser'
+    }
+
+    console.log('diaryUser', diaryUser.type, typeof diaryUser.type)
+
+    await connect(DB_URL + '/' + DB_NAME).then(async () => {
+      console.log('about to update:', diary.id)
+      await Diary.findByIdAndUpdate(diary.id, { user: diaryUser })
+    })
+  }).catch((e: any) => {
+    console.log(e)
+    throw new Error(e)
   })
 }
 

@@ -1,7 +1,7 @@
-import { Profile } from '../models/enums'
+import { Profile } from '../../models/enums'
 import validator from 'validator'
 import bcrypt from 'bcrypt'
-import { getNextUserId } from '../services/usersServices'
+import { getNextUserId } from './usersServices'
 
 const parseName = (nameFromRequest: any): string => {
   if (!isString(nameFromRequest)) {
