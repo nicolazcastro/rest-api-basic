@@ -32,5 +32,6 @@ export enum AdminAccessTypes{
   'me',
   'addDiary',
   'updateDiary',
-  'deleteDiary'
+  'deleteDiary',
+  'getUsers'
 }

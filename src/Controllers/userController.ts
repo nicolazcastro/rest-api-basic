@@ -4,6 +4,17 @@ import { Request, Response } from 'express'
 import toNewUserEntry from '../services/users/userUtils'
 import { decodeToken } from '../utils/jwt.utils'
 
+export function getUsers (_req: Request, res: Response): void {
+  userServices.getUsers().then((users) => {
+    console.log('Result from service: ')
+    console.log(users)
+    return (users != null) ? res.send(users) : res.sendStatus(404)
+  }).catch((e: any) => {
+    console.log(e)
+    throw new Error(e)
+  })
+}
+
 export async function register (req: Request, res: Response): Promise<void> {
   try {
     userServices.findByEmail(req.body.email).then(async (user) => {
