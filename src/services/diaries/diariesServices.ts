@@ -35,8 +35,6 @@ export async function getEntries (): Promise<IDiaryEntry[] | any> {
 export async function findByIdWithoutSensitiveInfo (id: string): Promise<IDiaryEntry | any> {
   await db.connectDb()
   return Diary.findById(id).then((entry: INonSensitiveInfoDiaryEntry | null) => {
-    console.log('Result from DB: ')
-    console.log(entry)
     if (entry == null) {
       return entry
     } else {
@@ -58,9 +56,6 @@ export async function findByIdWithoutSensitiveInfo (id: string): Promise<IDiaryE
 export async function findById (id: string): Promise<IDiaryEntry | any> {
   await db.connectDb()
   return Diary.findById(id).then((entry: INonSensitiveInfoDiaryEntry | null) => {
-    console.log('Result from DB: ')
-    console.log(entry)
-
     return entry
   }).catch((e: any) => {
     console.log(e)
@@ -81,12 +76,12 @@ export async function addDiary (parsedDiaryEntry: IParsedDiaryEntry): Promise<ID
     weather: parsedDiaryEntry.weather,
     visibility: parsedDiaryEntry.visibility,
     userId: parsedDiaryEntry.userId,
-    user: user._Id,
+    user: {
+      type: user._Id,
+      ref: 'IUser'
+    },
     comment: parsedDiaryEntry.comment
   })
-
-  console.log('New Diary Entry: ')
-  console.log(newDiaryEntry)
 
   return await newDiaryEntry.save().then(() => {
     return newDiaryEntry
@@ -107,9 +102,6 @@ export async function updateDiary (id: string, parsedDiaryEntry: INewDiaryEntry)
 
   const filter = { _id: id }
 
-  console.log('Updated Diary Entry: ')
-  console.log(updatedDiaryEntry)
-
   return Diary.findByIdAndUpdate(filter, updatedDiaryEntry).then(() => {
     return updatedDiaryEntry
   }).catch((e: any) => {
@@ -120,17 +112,12 @@ export async function updateDiary (id: string, parsedDiaryEntry: INewDiaryEntry)
 
 export async function setDiaryUser (diary: IDiaryEntry): Promise<void> {
   await userServices.findByUserId(diary.userId).then(async (user) => {
-    console.log('Result from user service: ', user.userId)
-
     const diaryUser: DiaryUser = {
       type: user._id,
       ref: 'IUser'
     }
 
-    console.log('diaryUser', diaryUser.type, typeof diaryUser.type)
-
     await db.connectDb()
-    console.log('about to update:', diary.id)
     await Diary.findByIdAndUpdate(diary.id, { user: diaryUser })
   }).catch((e: any) => {
     console.log(e)

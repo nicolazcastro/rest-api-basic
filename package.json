@@ -11,12 +11,13 @@
     "keys": "ts-node src/utils/gen.ts",
     "tsc": "tsc",
     "mongo": "/Users/nicolascastro/mongodb/bin/mongod --dbpath /Users/nicolascastro/mongodb-data",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx jest --coverage --detectOpenHandles"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@faker-js/faker": "^7.4.0",
     "@types/express": "4.17.12",
     "@types/find-config": "^1.0.1",
     "@types/jest": "^28.1.6",

@@ -11,8 +11,6 @@ export async function getUsers (): Promise<IUser[] | any> {
   await db.connectDb()
 
   return User.find().then((entries: IUser[] | null) => {
-    console.log('Users from DB: ')
-    console.log(entries)
     if (entries === null) {
       return entries
     } else {
@@ -34,8 +32,6 @@ export const getNextUserId = async (): Promise<number | any> => {
   await db.connectDb()
 
   return User.findOne().sort({ userId: -1 }).limit(1).then((entry: IUser | null) => {
-    console.log('Result next Id from DB: ')
-    console.log(entry)
     if (entry == null) {
       return 1
     } else {
@@ -55,7 +51,6 @@ export async function login (email: string, password: string): Promise<string | 
     if ((email.length > 0) && (password.length > 0)) {
       await db.connectDb()
 
-      console.log('Conection ok')
       return User.findOne({ email }).then(async (user: IUser | null) => {
         if (user == null) {
           return null
@@ -115,9 +110,6 @@ export async function findByUserId (userId: number): Promise<IUser | any> {
 export async function findByEmail (email: string): Promise<IUser | any> {
   await db.connectDb()
   return User.findOne({ email: email }).then((entry: IUser | null) => {
-    console.log('Result from DB: ')
-    console.log(entry)
-
     return entry
   }).catch((e: any) => {
     console.log(e)
@@ -144,9 +136,6 @@ export async function findMeByUserId (userId: string): Promise<IUser | any> {
 export async function findById (id: string): Promise<IUser | any> {
   await db.connectDb()
   return User.findById(id).then((entry: IUser | null) => {
-    console.log('Result from DB: ')
-    console.log(entry)
-
     return entry
   }).catch((e: any) => {
     console.log(e)
@@ -165,7 +154,6 @@ export async function register (parsedUserEntry: INewUserEntry): Promise<IUser |
     profile: parsedUserEntry.profile
   })
   return await newUserEntry.save().then(() => {
-    console.log('user saved')
     return newUserEntry
   }).catch((e: any) => {
     console.log(e)
