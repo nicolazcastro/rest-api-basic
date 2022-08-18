@@ -1,5 +1,5 @@
 import dotenv from 'dotenv'
-import { connect, model, disconnect, Types } from 'mongoose'
+import { connect, model, disconnect, Types, connection } from 'mongoose'
 import * as DiaryModel from '../models/diary'
 import * as UserModel from '../models/user'
 
@@ -25,4 +25,16 @@ export function getDiaryModel (): any {
 
 export function getNewObjectId (): any {
   return new Types.ObjectId()
+}
+
+export async function collectionExist (collName: string): Promise<boolean> {
+  await connectDb()
+  connection.db.listCollections({ name: collName })
+    .next(function (_err, collinfo) {
+      if (collinfo != null) {
+        return true
+      }
+      return false
+    })
+  return false
 }

@@ -1,4 +1,3 @@
-// import { IDiaryEntry } from '../../models/diary'
 import * as db from '../../db/db'
 import * as diaryServices from '../../services/diaries/diariesServices'
 import * as userServices from '../../services/users/usersServices'
@@ -13,6 +12,13 @@ const Diary = db.getDiaryModel()
 const User = db.getUserModel()
 describe('Diaries Testing', () => {
   beforeAll(async () => {
+    if (await db.collectionExist('diaries')) {
+      await Diary.collection.drop()
+    }
+
+    if (await db.collectionExist('users')) {
+      await User.collection.drop()
+    }
     await db.connectDb()
   })
 
