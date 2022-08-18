@@ -7,6 +7,7 @@ import { faker } from '@faker-js/faker'
 import { Weather, Visibility } from '../../models/enums'
 import toNewUserEntry from '../../services/users/userUtils'
 import { INewUserEntry } from '../../models/user'
+import validator from 'validator'
 
 const Diary = db.getDiaryModel()
 const User = db.getUserModel()
@@ -40,10 +41,9 @@ describe('Diaries Testing', () => {
     })
 
     await userServices.register(parsedUserEntry)
-    // const user = await userServices.findByUserId(1) as unknown as IUser
 
-    // console.log('new user test: ')
-    // console.log(user)
+    const weather = randomEnumValue(Weather)
+    const visibility = randomEnumValue(Visibility)
 
     for (let i = 0; i < 5; i++) {
       const fakeDate = faker.date.between('2015-01-01', '2022-01-05')
@@ -51,8 +51,8 @@ describe('Diaries Testing', () => {
 
       diaryInput = {
         date: stringDate,
-        weather: randomEnumValue(Weather),
-        visibility: randomEnumValue(Visibility),
+        weather: weather,
+        visibility: visibility,
         comment: faker.word.adjective(50),
         userId: '1'
       }
@@ -66,10 +66,12 @@ describe('Diaries Testing', () => {
     await diaryServices.getEntries().then((entries: any[]) => {
       expect(entries).toBeDefined()
       expect(entries).toBeInstanceOf(Array)
-      /*
-      for (const entry of createdDiaries) {
-        expect(entry).toBeInstanceOf(IDiaryEntry)
-      } */
+
+      for (const entry of entries) {
+        expect(validator.isDate(entry.date)).toEqual(true)
+        expect(entry.weather).toBe(weather)
+        expect(entry.visibility).toBe(visibility)
+      }
     }).catch((e: any) => {
       console.log(e)
       throw new Error(e)
