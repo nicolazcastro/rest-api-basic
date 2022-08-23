@@ -128,7 +128,6 @@ export async function setDiaryUser (diary: IDiaryEntry): Promise<void> {
 export async function deleteDiary (id: string): Promise<IDiaryEntry | any> {
   await db.connectDb()
   const filter = { _id: id }
-
   return Diary.findByIdAndDelete(filter).then((deletedEntry: any) => {
     return deletedEntry
   }).catch((e: any) => {
