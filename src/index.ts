@@ -10,9 +10,6 @@ app.use(express.json())
 
 const PORT = 3000
 
-/*
-This is for testing purposes
-*/
 if (process.env.NODE_ENV !== 'production') {
   const userTypes = Object.values(AccessTypes) as any[]
   const payload: TokenPayload = {
