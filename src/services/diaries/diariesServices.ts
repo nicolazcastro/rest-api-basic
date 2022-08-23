@@ -66,7 +66,6 @@ export async function findById (id: string): Promise<IDiaryEntry | any> {
 export async function addDiary (parsedDiaryEntry: IParsedDiaryEntry): Promise<IDiaryEntry | any> {
   await db.connectDb()
   const user = await userServices.findByUserId(parsedDiaryEntry.userId)
-
   if (user === null) {
     throw new Error('User does not exist')
   }
