@@ -42,7 +42,9 @@ seeder
       console.log('Result from diaries service: ', diary)
       await diaryServices.setDiaryUser(diary)
     }
+    process.exit(0)
   })
   .catch(err => {
     console.log(err)
+    process.exit(0)
   })
