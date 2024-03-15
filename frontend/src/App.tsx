@@ -1,5 +1,5 @@
-// src/App.tsx
 import React from 'react';
+import { UserProvider } from './context/UserContext'; // Import UserProvider
 import Header from './components/Header';
 import Footer from './components/Footer';
 import LoginModal from './components/LoginModal';
@@ -10,15 +10,17 @@ import DiaryForm from './components/DiaryForm';
 
 const App: React.FC = () => {
   return (
-    <div>
-      <Header />
-      <UserInfo />
-      <LoginModal />
-      <RegisterModal />
-      <DiaryList />
-      <DiaryForm />
-      <Footer />
-    </div>
+    <UserProvider> {/* Wrap your application with UserProvider */}
+      <div>
+        <Header />
+        <UserInfo />
+        <LoginModal />
+        <RegisterModal />
+        <DiaryList />
+        <DiaryForm />
+        <Footer />
+      </div>
+    </UserProvider>
   );
 };
 
