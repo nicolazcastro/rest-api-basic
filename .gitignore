@@ -1,5 +1,7 @@
 node_modules/
-build/
+backend/build/
 .env
-src/keys/*
-coverage/
+backend/src/keys/*
+backend/coverage/
+
+frontend/build/
