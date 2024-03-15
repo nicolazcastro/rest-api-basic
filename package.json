@@ -9,7 +9,7 @@
     "lint": "ts-standard",
     "start": "node build/src/index.js",
     "keys": "ts-node src/utils/gen.ts",
-    "tsc": "tsc",
+    "build": "tsc && node copyKeys.js",
     "mongo": "/Users/nicolascastro/mongodb/bin/mongod --dbpath /Users/nicolascastro/mongodb-data",
     "test": "npx jest --coverage --detectOpenHandles"
   },
