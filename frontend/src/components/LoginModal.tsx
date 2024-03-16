@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { login } from '../services/userServices';
 import { useUserContext } from '../context/UserContext';
+import { isValidEmail } from '../utils/validation';
 
 interface LoginModalProps {
     onClose: () => void;
@@ -9,17 +10,17 @@ interface LoginModalProps {
 const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState<string>('');
+    const [errors, setErrors] = useState<string[]>([]);
     const { setUser } = useUserContext();
 
     const handleLogin = async () => {
         if (!email || !password) {
-            setError('Email and password are required.');
+            setErrors(['Email and password are required.']);
             return;
         }
 
         if (!isValidEmail(email)) {
-            setError('Please enter a valid email address.');
+            setErrors(['Please enter a valid email address.']);
             return;
         }
 
@@ -30,14 +31,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
             onClose(); // Close the modal after successful login
         } catch (error) {
             console.error('Error logging in:', error);
-            setError('Error logging in');
+            setErrors(['Error logging in']);
         }
-    };
-
-    const isValidEmail = (email: string) => {
-        // Regular expression to validate email format
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
     };
 
     return (
@@ -51,7 +46,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
                     <div className="modal-body">
                         <input type="email" className="form-control" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
                         <input type="password" className="form-control" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                        {error && <p className="text-danger">{error}</p>}
+                        {errors.map((error, index) => (
+                            <p key={index} className="error-message">{error}</p>
+                        ))}
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-primary" onClick={handleLogin}>Login</button>

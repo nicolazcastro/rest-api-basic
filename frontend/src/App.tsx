@@ -6,6 +6,7 @@ import LoginModal from './components/LoginModal';
 import RegisterModal from './components/RegisterModal';
 import DiaryList from './components/DiaryList';
 import DiaryForm from './components/DiaryForm';
+import Content from './components/Content';
 
 const App: React.FC = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -18,12 +19,15 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      <div>
+      <div className="app-container">
         <Header />
-        <Routes>
-          <Route path="/diary-list" element={<DiaryList />} />
-          <Route path="/diary-form" element={<DiaryForm />} />
-        </Routes>
+        <div className="content">
+          <Content />
+          <Routes>
+            <Route path="/diary-list" element={<DiaryList />} />
+            <Route path="/diary-form" element={<DiaryForm />} />
+          </Routes>
+        </div>
         <Footer />
 
         {showLoginModal && <LoginModal onClose={handleCloseModal} />}
