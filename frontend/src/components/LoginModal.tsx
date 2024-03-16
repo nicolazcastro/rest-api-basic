@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { login } from '../services/userServices';
+import { useUserContext } from '../context/UserContext';
 
 interface LoginModalProps {
     onClose: () => void;
@@ -9,6 +10,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string>('');
+    const { setUser } = useUserContext();
 
     const handleLogin = async () => {
         if (!email || !password) {
@@ -23,8 +25,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
 
         try {
             const token = await login(email, password);
-            console.log('Logged in:', token);
-            onClose(); // Cerramos el modal después del inicio de sesión exitoso
+            localStorage.setItem('token', token); // Store token in localStorage
+            setUser({ name: '', email: '' }); // Update user context with user information if needed
+            onClose(); // Close the modal after successful login
         } catch (error) {
             console.error('Error logging in:', error);
             setError('Error logging in');

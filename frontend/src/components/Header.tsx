@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import LoginModal from './LoginModal';
 import RegisterModal from './RegisterModal';
@@ -9,13 +9,15 @@ const Header: React.FC = () => {
     const [showRegisterModal, setShowRegisterModal] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
 
+    useEffect(() => {
+        setIsAuthenticated(!!localStorage.getItem('token'));
+    }, [localStorage.getItem('token')]);
+
     const handleLoginButtonClick = async () => {
-        console.log('Login button clicked');
         setShowLoginModal(true);
     };
 
     const handleRegisterButtonClick = () => {
-        console.log('Register button clicked');
         setShowRegisterModal(true);
     };
 
@@ -44,12 +46,12 @@ const Header: React.FC = () => {
                         </li>
                     </ul>
                     <div className="d-flex">
-                        {isAuthenticated ? ( // Si el usuario está autenticado, mostrar UserInfo y el botón de logout
+                        {isAuthenticated ? (
                             <>
                                 <UserInfo />
                                 <button className="btn btn-outline-primary me-2" onClick={handleLogoutButtonClick}>Logout</button>
                             </>
-                        ) : ( // Si el usuario no está autenticado, mostrar los botones de login y registro
+                        ) : (
                             <>
                                 <button className="btn btn-outline-primary me-2" onClick={handleLoginButtonClick}>Login</button>
                                 <button className="btn btn-outline-primary" onClick={handleRegisterButtonClick}>Register</button>
