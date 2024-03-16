@@ -1,28 +1,41 @@
-// src/components/DiaryList.tsx
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { getDiaryEntries } from '../services/diaryServices';
 
 const DiaryList: React.FC = () => {
-    const [diaries, setDiaries] = useState<any[]>([]);
+    const [diaryEntries, setDiaryEntries] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        axios.get('/api/v1/diaries')
-            .then(response => {
-                setDiaries(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching diaries:', error);
-            });
+        getEntries();
     }, []);
+
+    const getEntries = async () => {
+        try {
+            setIsLoading(true);
+            const response = await getDiaryEntries();
+            setDiaryEntries(response);
+        } catch (error) {
+            console.error('Error fetching diary entries:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <div>
-            <h2>Diary List</h2>
-            <ul>
-                {diaries.map(diary => (
-                    <li key={diary.id}>{diary.date}</li>
-                ))}
-            </ul>
+            <h2>Diary Entries</h2>
+            {isLoading ? (
+                <p>Loading...</p>
+            ) : (
+                <ul>
+                    {diaryEntries.map((entry: any) => (
+                        <li key={entry.id}>
+                            <Link to={`/diary-form/edit/${entry.id}`}>{entry.title}</Link>
+                        </li>
+                    ))}
+                </ul>
+            )}
         </div>
     );
 };
