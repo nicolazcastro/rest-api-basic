@@ -1,29 +1,61 @@
-// src/components/LoginModal.tsx
 import React, { useState } from 'react';
-import axios from 'axios';
+import { login } from '../services/userServices';
 
-const LoginModal: React.FC = () => {
-    const [username, setUsername] = useState('');
+interface LoginModalProps {
+    onClose: () => void;
+}
+
+const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState<string>('');
 
-    const handleLogin = () => {
-        axios.post('/api/v1/user/login', { username, password })
-            .then(response => {
-                // Handle successful login
-                console.log('Logged in:', response.data);
-            })
-            .catch(error => {
-                // Handle login error
-                console.error('Error logging in:', error);
-            });
+    const handleLogin = async () => {
+        if (!email || !password) {
+            setError('Email and password are required.');
+            return;
+        }
+
+        if (!isValidEmail(email)) {
+            setError('Please enter a valid email address.');
+            return;
+        }
+
+        try {
+            const token = await login(email, password);
+            console.log('Logged in:', token);
+            onClose(); // Cerramos el modal después del inicio de sesión exitoso
+        } catch (error) {
+            console.error('Error logging in:', error);
+            setError('Error logging in');
+        }
+    };
+
+    const isValidEmail = (email: string) => {
+        // Regular expression to validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
     };
 
     return (
-        <div className="modal">
-            <h2>Login Modal</h2>
-            <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
-            <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
-            <button onClick={handleLogin}>Login</button>
+        <div className="modal fade show" tabIndex={-1} role="dialog" style={{ display: 'block' }}>
+            <div className="modal-dialog" role="document">
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title">Login</h5>
+                        <button type="button" className="btn-close" aria-label="Close" onClick={onClose}></button>
+                    </div>
+                    <div className="modal-body">
+                        <input type="email" className="form-control" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                        <input type="password" className="form-control" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                        {error && <p className="text-danger">{error}</p>}
+                    </div>
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-primary" onClick={handleLogin}>Login</button>
+                        <button type="button" className="btn btn-secondary" onClick={onClose}>Close</button>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

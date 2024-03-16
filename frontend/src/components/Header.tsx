@@ -1,7 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import LoginModal from './LoginModal';
+import RegisterModal from './RegisterModal';
+import UserInfo from './UserInfo';
 
 const Header: React.FC = () => {
+    const [showLoginModal, setShowLoginModal] = useState(false);
+    const [showRegisterModal, setShowRegisterModal] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
+
+    const handleLoginButtonClick = async () => {
+        console.log('Login button clicked');
+        setShowLoginModal(true);
+    };
+
+    const handleRegisterButtonClick = () => {
+        console.log('Register button clicked');
+        setShowRegisterModal(true);
+    };
+
+    const handleLogoutButtonClick = () => {
+        localStorage.removeItem('token');
+        setIsAuthenticated(false);
+    };
+
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="container-fluid">
@@ -10,7 +32,7 @@ const Header: React.FC = () => {
                     <span className="navbar-toggler-icon"></span>
                 </button>
                 <div className="collapse navbar-collapse" id="navbarNav">
-                    <ul className="navbar-nav">
+                    <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                         <li className="nav-item">
                             <Link className="nav-link" to="/">Home</Link>
                         </li>
@@ -21,8 +43,23 @@ const Header: React.FC = () => {
                             <Link className="nav-link" to="/contact">Contact</Link>
                         </li>
                     </ul>
+                    <div className="d-flex">
+                        {isAuthenticated ? ( // Si el usuario está autenticado, mostrar UserInfo y el botón de logout
+                            <>
+                                <UserInfo />
+                                <button className="btn btn-outline-primary me-2" onClick={handleLogoutButtonClick}>Logout</button>
+                            </>
+                        ) : ( // Si el usuario no está autenticado, mostrar los botones de login y registro
+                            <>
+                                <button className="btn btn-outline-primary me-2" onClick={handleLoginButtonClick}>Login</button>
+                                <button className="btn btn-outline-primary" onClick={handleRegisterButtonClick}>Register</button>
+                            </>
+                        )}
+                    </div>
                 </div>
             </div>
+            {showLoginModal && <LoginModal onClose={() => setShowLoginModal(false)} />}
+            {showRegisterModal && <RegisterModal onClose={() => setShowRegisterModal(false)} />}
         </nav>
     );
 };

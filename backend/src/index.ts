@@ -1,4 +1,5 @@
 import express from 'express'
+import cors from 'cors';
 import diaryRouter from './routes/diaries'
 import userRouter from './routes/users'
 import { generateToken } from './utils/jwt.utils'
@@ -7,6 +8,8 @@ import { AccessTypes } from './models/enums'
 
 const app = express()
 app.use(express.json())
+
+app.use(cors())
 
 const PORT = 3000
 
