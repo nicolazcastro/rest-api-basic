@@ -7,7 +7,7 @@ import * as db from '../../db/db'
 
 const User = db.getUserModel()
 
-export async function getUsers (): Promise<IUser[] | any> {
+export async function getUsers(): Promise<IUser[] | any> {
   await db.connectDb()
 
   return User.find().then((entries: IUser[] | null) => {
@@ -46,7 +46,7 @@ export const getNextUserId = async (): Promise<number | any> => {
   })
 }
 
-export async function login (email: string, password: string): Promise<string | null> {
+export async function login(email: string, password: string): Promise<string | null> {
   try {
     if ((email.length > 0) && (password.length > 0)) {
       await db.connectDb()
@@ -72,6 +72,7 @@ export async function login (email: string, password: string): Promise<string | 
 
           const payload: TokenPayload = {
             name: user.name,
+            email: user.email,
             userId: user.userId,
             accessTypes
           }
@@ -96,7 +97,7 @@ export async function login (email: string, password: string): Promise<string | 
   }
 }
 
-export async function findByUserId (userId: number): Promise<IUser | any> {
+export async function findByUserId(userId: number): Promise<IUser | any> {
   await db.connectDb()
 
   return User.findOne({ userId }).then((entry: IUser | null) => {
@@ -107,7 +108,7 @@ export async function findByUserId (userId: number): Promise<IUser | any> {
   })
 }
 
-export async function findByEmail (email: string): Promise<IUser | any> {
+export async function findByEmail(email: string): Promise<IUser | any> {
   await db.connectDb()
   return User.findOne({ email: email }).then((entry: IUser | null) => {
     return entry
@@ -117,7 +118,7 @@ export async function findByEmail (email: string): Promise<IUser | any> {
   })
 }
 
-export async function findMeByUserId (userId: string): Promise<IUser | any> {
+export async function findMeByUserId(userId: string): Promise<IUser | any> {
   await db.connectDb()
   return User.findOne({ userId }).then((entry: IUser | null) => {
     const obj: Partial<IUser> = {
@@ -133,7 +134,7 @@ export async function findMeByUserId (userId: string): Promise<IUser | any> {
   })
 }
 
-export async function findById (id: string): Promise<IUser | any> {
+export async function findById(id: string): Promise<IUser | any> {
   await db.connectDb()
   return User.findById(id).then((entry: IUser | null) => {
     return entry
@@ -143,7 +144,7 @@ export async function findById (id: string): Promise<IUser | any> {
   })
 }
 
-export async function register (parsedUserEntry: INewUserEntry): Promise<IUser | any> {
+export async function register(parsedUserEntry: INewUserEntry): Promise<IUser | any> {
   await db.connectDb()
   const newUserEntry: INewUserEntry = new User({
     name: parsedUserEntry.name,
@@ -161,6 +162,6 @@ export async function register (parsedUserEntry: INewUserEntry): Promise<IUser |
   })
 }
 
-export async function setUserPassword (id: string, pass: string): Promise<void> {
+export async function setUserPassword(id: string, pass: string): Promise<void> {
   await User.findByIdAndUpdate(id, { password: pass })
 }

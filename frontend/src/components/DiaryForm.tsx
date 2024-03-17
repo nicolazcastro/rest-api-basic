@@ -1,50 +1,59 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { getDiaryEntryById, createDiaryEntry, updateDiaryEntry } from '../services/diaryServices';
+import { useUserContext } from '../context/UserContext';
+import { Visibility, Weather } from '../models/constants'; // Import enums
 
-// Define la interfaz DiaryFormProps para especificar las props del componente
 interface DiaryFormProps {
-    mode: 'create' | 'edit'; // Define la prop mode como 'create' o 'edit'
+    mode: 'create' | 'edit';
 }
 
-// Usa la interfaz DiaryFormProps para tipar las props del componente
+interface DiaryEntry {
+    id: string;
+    date: string; // Assuming it's a string, adjust as needed
+    weather: Weather;
+    userId: string;
+    visibility: Visibility;
+}
+
 const DiaryForm: React.FC<DiaryFormProps> = ({ mode }) => {
     const { id } = useParams<{ id: string }>();
-    const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
+    const [diaryEntry, setDiaryEntry] = useState<DiaryEntry>({
+        id: id || '', // ID is statically displayed
+        date: '',
+        weather: Weather.Sunny,
+        userId: '',
+        visibility: Visibility.Great
+    });
     const [isLoading, setIsLoading] = useState(false);
+    const { token } = useUserContext();
 
     useEffect(() => {
         const fetchData = async () => {
-            const getDiaryEntry = async () => {
+            if (mode === 'edit' && id) {
                 try {
                     setIsLoading(true);
-                    const response = await getDiaryEntryById(id!);
-                    setTitle(response.title);
-                    setContent(response.content);
+                    const response = await getDiaryEntryById(id!, token!);
+                    setDiaryEntry(response);
                 } catch (error) {
                     console.error('Error fetching diary entry:', error);
                 } finally {
                     setIsLoading(false);
                 }
-            };
-
-            if (mode === 'edit' && id) {
-                await getDiaryEntry();
             }
         };
 
         fetchData();
-    }, [mode, id]);
+    }, [mode, id, token]);
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         try {
             setIsLoading(true);
             if (mode === 'edit') {
-                await updateDiaryEntry(id!, { title, content });
+                await updateDiaryEntry(id!, diaryEntry, token!);
             } else {
-                await createDiaryEntry({ title, content });
+                await createDiaryEntry(diaryEntry, token!);
             }
         } catch (error) {
             console.error('Error saving diary entry:', error);
@@ -53,17 +62,41 @@ const DiaryForm: React.FC<DiaryFormProps> = ({ mode }) => {
         }
     };
 
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        const { name, value } = event.target;
+        setDiaryEntry(prevEntry => ({
+            ...prevEntry,
+            [name]: value
+        }));
+    };
+
     return (
         <div>
             <h2>{id ? 'Edit Diary Entry' : 'Create Diary Entry'}</h2>
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label>Title:</label>
-                    <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+                    <label>ID:</label>
+                    <input type="text" value={diaryEntry.id} disabled />
                 </div>
                 <div>
-                    <label>Content:</label>
-                    <textarea value={content} onChange={(e) => setContent(e.target.value)} />
+                    <label>Date:</label>
+                    <input type="date" name="date" value={diaryEntry.date} onChange={handleChange} />
+                </div>
+                <div>
+                    <label>Weather:</label>
+                    <select name="weather" value={diaryEntry.weather} onChange={handleChange}>
+                        {Object.values(Weather).map(weather => (
+                            <option key={weather} value={weather}>{weather}</option>
+                        ))}
+                    </select>
+                </div>
+                <div>
+                    <label>Visibility:</label>
+                    <select name="visibility" value={diaryEntry.visibility} onChange={handleChange}>
+                        {Object.values(Visibility).map(visibility => (
+                            <option key={visibility} value={visibility}>{visibility}</option>
+                        ))}
+                    </select>
                 </div>
                 <button type="submit" disabled={isLoading}>{isLoading ? 'Loading...' : 'Submit'}</button>
             </form>

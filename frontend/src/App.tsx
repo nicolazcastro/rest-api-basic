@@ -7,7 +7,8 @@ import RegisterModal from './components/RegisterModal';
 import DiaryList from './components/DiaryList';
 import DiaryForm from './components/DiaryForm';
 import Content from './components/Content';
-import RedirectComponent from './components/RedirectComponent';
+import ProtectedRoute from './components/ProtectedRoute';
+
 
 const App: React.FC = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -27,18 +28,18 @@ const App: React.FC = () => {
           <Routes>
 
             {/* Protected route for diary list */}
-            <Route path="/diary-list" element={<RedirectComponent component={DiaryList} />} />
+            <Route path="/diary-list" element={<ProtectedRoute component={DiaryList} />} />
 
             {/* Protected route for creating a new diary entry */}
             <Route
               path="/diary-form/new"
-              element={< RedirectComponent component={DiaryForm} mode="create" />}
+              element={< ProtectedRoute component={DiaryForm} mode="create" />}
             />
 
             {/* Protected route for editing an existing diary entry */}
             <Route
               path="/diary-form/edit/:id"
-              element={< RedirectComponent component={DiaryForm} mode="edit" />}
+              element={< ProtectedRoute component={DiaryForm} mode="edit" />}
             />
           </Routes>
         </div>

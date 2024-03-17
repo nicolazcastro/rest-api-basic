@@ -1,10 +1,10 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import './assets/css/styles.css'; // Import the CSS file
+import './assets/css/styles.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { UserProvider } from './context/UserContext'; // Importar UserProvider
+import { UserProvider } from './context/UserContext';
 
 const rootElement = document.getElementById('root');
 if (rootElement) {

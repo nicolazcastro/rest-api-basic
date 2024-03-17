@@ -2,9 +2,13 @@ import axios from 'axios';
 
 const baseURL = 'http://localhost:3000/api/v1/diaries';
 
-export const getDiaryEntries = async () => {
+export const getDiaryEntries = async (token: string) => {
     try {
-        const response = await axios.get(baseURL);
+        const response = await axios.get(`${baseURL}/`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
         return response.data;
     } catch (error) {
         console.error('Error fetching diary entries:', error);
@@ -12,9 +16,13 @@ export const getDiaryEntries = async () => {
     }
 };
 
-export const getDiaryEntryById = async (id: string) => {
+export const getDiaryEntryById = async (id: string, token: string) => {
     try {
-        const response = await axios.get(`${baseURL}/${id}`);
+        const response = await axios.get(`${baseURL}/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
         return response.data;
     } catch (error) {
         console.error('Error fetching diary entry by ID:', error);
@@ -22,9 +30,13 @@ export const getDiaryEntryById = async (id: string) => {
     }
 };
 
-export const createDiaryEntry = async (data: any) => {
+export const createDiaryEntry = async (data: any, token: string) => {
     try {
-        const response = await axios.post(baseURL, data);
+        const response = await axios.post(baseURL, data, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
         return response.data;
     } catch (error) {
         console.error('Error creating diary entry:', error);
@@ -32,9 +44,13 @@ export const createDiaryEntry = async (data: any) => {
     }
 };
 
-export const updateDiaryEntry = async (id: string, data: any) => {
+export const updateDiaryEntry = async (id: string, data: any, token: string) => {
     try {
-        const response = await axios.patch(`${baseURL}/${id}`, data);
+        const response = await axios.post(`${baseURL}/${id}`, data, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
         return response.data;
     } catch (error) {
         console.error('Error updating diary entry:', error);

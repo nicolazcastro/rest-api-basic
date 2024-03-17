@@ -18,6 +18,7 @@ if (process.env.NODE_ENV !== 'production') {
   const payload: TokenPayload = {
     name: 'John Doe',
     userId: 1,
+    email: "john@doe.com",
     accessTypes: userTypes
   }
   console.log('JWT Token: ', generateToken(payload))

@@ -4,7 +4,7 @@ import { Request, Response } from 'express'
 import toNewUserEntry from '../services/users/userUtils'
 import { decodeToken } from '../utils/jwt.utils'
 
-export function getUsers (_req: Request, res: Response): void {
+export function getUsers(_req: Request, res: Response): void {
   userServices.getUsers().then((users) => {
     console.log('Result from service: ')
     console.log(users)
@@ -15,7 +15,7 @@ export function getUsers (_req: Request, res: Response): void {
   })
 }
 
-export async function register (req: Request, res: Response): Promise<void> {
+export async function register(req: Request, res: Response): Promise<void> {
   try {
     userServices.findByEmail(req.body.email).then(async (user) => {
       if (user !== null) {
@@ -46,11 +46,16 @@ export async function register (req: Request, res: Response): Promise<void> {
   }
 }
 
-export async function login (req: Request, res: Response): Promise<void> {
+export async function login(req: Request, res: Response): Promise<void> {
   try {
     if (req.body.email !== undefined && req.body.password !== undefined) {
       userServices.login(req.body.email, req.body.password).then((token) => {
-        return (token != null) ? res.send({ token }) : res.sendStatus(401)
+        let user = {}
+        if (token) {
+          const decodedToken = decodeToken(token)
+          user = { name: decodedToken.name, email: decodedToken.email, id: decodedToken.id }
+        }
+        return (token != null) ? res.send({ token, user }) : res.sendStatus(401)
       }).catch((e: any) => {
         console.log(e)
         throw new Error(e)
@@ -63,7 +68,7 @@ export async function login (req: Request, res: Response): Promise<void> {
   }
 }
 
-export async function me (req: Request, res: Response): Promise<void> {
+export async function me(req: Request, res: Response): Promise<void> {
   try {
     let token: string = req.headers.authorization as string
     if (token.toLowerCase().startsWith('bearer')) {

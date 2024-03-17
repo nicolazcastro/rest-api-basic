@@ -1,26 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getDiaryEntries } from '../services/diaryServices';
+import { useUserContext } from '../context/UserContext';
 
 const DiaryList: React.FC = () => {
     const [diaryEntries, setDiaryEntries] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const { token } = useUserContext();
 
     useEffect(() => {
-        getEntries();
-    }, []);
+        const fetchDiaryEntries = async () => {
+            try {
+                setIsLoading(true);
+                const response = await getDiaryEntries(token!); // Pass token here
+                setDiaryEntries(response);
+            } catch (error) {
+                console.error('Error fetching diary entries:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-    const getEntries = async () => {
-        try {
-            setIsLoading(true);
-            const response = await getDiaryEntries();
-            setDiaryEntries(response);
-        } catch (error) {
-            console.error('Error fetching diary entries:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+        fetchDiaryEntries();
+    }, [token]);
 
     return (
         <div>
@@ -31,7 +33,7 @@ const DiaryList: React.FC = () => {
                 <ul>
                     {diaryEntries.map((entry: any) => (
                         <li key={entry.id}>
-                            <Link to={`/diary-form/edit/${entry.id}`}>{entry.title}</Link>
+                            <Link to={`/diary-form/edit/${entry.id}`}>{entry.date}&nbsp;Weather: {entry.weather}&nbsp;Visibility: {entry.visibility}</Link>
                         </li>
                     ))}
                 </ul>

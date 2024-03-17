@@ -7,11 +7,8 @@ const UserInfo: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Obtener el token de acceso del localStorage
                 const token = localStorage.getItem('token');
-                // Verificar si el token es null antes de llamar a getUserInfo
                 if (token !== null) {
-                    // Llamar a getUserInfo con el token de acceso
                     const userInfo = await getUserInfo(token);
                     setUser(userInfo);
                 } else {
@@ -23,7 +20,7 @@ const UserInfo: React.FC = () => {
             }
         };
 
-        fetchData(); // Llamar a la función fetchData al montar el componente
+        fetchData();
     }, []); // Vacío para que se ejecute solo una vez al montar el componente
 
     if (!user) {
