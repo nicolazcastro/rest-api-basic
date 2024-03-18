@@ -10,10 +10,6 @@ interface RedirectProps {
 
 const ProtectedRoute: React.FC<RedirectProps> = ({ component: Component, mode }) => {
     const { isAuthenticated, token } = useUserContext();
-
-    console.log('ProtectedRoute IsAuthenticated:', isAuthenticated); // Add debugging statement
-    console.log('ProtectedRoute token:', token); // Add debugging statement
-
     return isAuthenticated && token ? <Component mode={mode} /> : <Navigate to="/" replace />;
 };
 

@@ -1,6 +1,6 @@
 // src/context/UserContext.tsx
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
-import { login } from '../services/userServices';
+
 
 // Define the shape of the user object
 interface User {
@@ -11,11 +11,10 @@ interface User {
 // Define the context type
 interface UserContextType {
     user: User | null;
-    setUser: (user: User | null) => void;
     isAuthenticated: boolean;
     token: string | null;
-    login: (email: string, password: string, setToken: (token: string | null) => void, setIsAuthenticated: (isAuthenticated: boolean) => void) => Promise<void>;
     logout: () => void;
+    setUserData: (userData: { user: User | null, token: string | null, isAuthenticated: boolean }) => void;
 }
 
 // Create the context
@@ -28,35 +27,27 @@ interface UserProviderProps {
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!localStorage.getItem('token'));
     const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
 
     useEffect(() => {
-        console.log('Updated isAuthenticated:', isAuthenticated);
-        console.log('Updated storedToken:', token);
     }, [isAuthenticated, token]);
-
-    const handleLogin = async (email: string, password: string, setToken: (token: string | null) => void, setIsAuthenticated: (isAuthenticated: boolean) => void) => {
-        try {
-            const token = await login(email, password);
-            localStorage.setItem('token', token);
-
-            console.log('At Login token:', token);
-            setToken(token);
-            setIsAuthenticated(true);
-        } catch (error) {
-            console.error('Error logging in:', error);
-            throw error;
-        }
-    };
 
     const handleLogout = () => {
         localStorage.removeItem('token');
         setIsAuthenticated(false);
+        setUser(null); // Clear user data on logout
+        setToken(null);
+    };
+
+    const setUserData = ({ user, token, isAuthenticated }: { user: User | null, token: string | null, isAuthenticated: boolean }) => {
+        setUser(user);
+        setToken(token);
+        setIsAuthenticated(isAuthenticated);
     };
 
     return (
-        <UserContext.Provider value={{ user, setUser, isAuthenticated, token, login: handleLogin, logout: handleLogout }}>
+        <UserContext.Provider value={{ user, setUserData, isAuthenticated, token, logout: handleLogout }}>
             {children}
         </UserContext.Provider>
     );
@@ -68,14 +59,6 @@ export const useUserContext = () => {
     if (!context) {
         console.log('useUserContext must be used within a UserProvider');
         throw new Error('useUserContext must be used within a UserProvider');
-    } else {
-        console.log('useUserContext called');
     }
     return context;
-};
-
-// Export handleLogin function
-export const handleLogin = (email: string, password: string, setToken: (token: string | null) => void, setIsAuthenticated: (isAuthenticated: boolean) => void) => {
-    const { login } = useUserContext();
-    return login(email, password, setToken, setIsAuthenticated);
 };

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useUserContext, handleLogin } from '../context/UserContext';
+import { User } from '../types/userContextType';
 
 // Base URL of the backend
 const baseURL = 'http://localhost:3000/api/v1/user';
@@ -28,13 +28,11 @@ export const registerUser = async (email: string, password: string) => {
     }
 };
 
-export const login = async (email: string, password: string): Promise<string> => {
+export const login = async (email: string, password: string, setUserData: (user: User | null, token: string, isAuthenticated: boolean) => void): Promise<string> => {
     try {
         const response = await axios.post(`${baseURL}/login`, { email, password });
         const token = response.data.token; // Retrieve the token from the response
-        const { setUser } = useUserContext();
-        setUser(response.data.user);
-        handleLogin();
+        setUserData(response.data.user, token, true);
         return token;
     } catch (error) {
         console.error('Error logging in:', error);
