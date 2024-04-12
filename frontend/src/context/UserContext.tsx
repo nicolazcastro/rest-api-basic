@@ -1,12 +1,6 @@
 // src/context/UserContext.tsx
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
-
-
-// Define the shape of the user object
-interface User {
-    name: string;
-    email: string;
-}
+import { User } from '../types/userContextType';
 
 // Define the context type
 interface UserContextType {
