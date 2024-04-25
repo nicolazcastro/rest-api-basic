@@ -13,6 +13,7 @@ interface DiaryEntry {
     date: string; // Assuming it's a string, adjust as needed
     weather: Weather;
     userId: string;
+    comment: string;
     visibility: Visibility;
 }
 
@@ -23,6 +24,7 @@ const DiaryForm: React.FC<DiaryFormProps> = ({ mode }) => {
         date: '',
         weather: Weather.Sunny,
         userId: '',
+        comment: '',
         visibility: Visibility.Great
     });
     const [isLoading, setIsLoading] = useState(false);
@@ -46,21 +48,43 @@ const DiaryForm: React.FC<DiaryFormProps> = ({ mode }) => {
         fetchData();
     }, [mode, id, token]);
 
+    const [alertMessage, setAlertMessage] = useState<string | null>(null);
+    const [isAlertVisible, setIsAlertVisible] = useState(false);
+
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         try {
             setIsLoading(true);
             if (mode === 'edit') {
                 await updateDiaryEntry(id!, diaryEntry, token!);
+                setAlertMessage('Diary entry updated successfully!');
             } else {
                 await createDiaryEntry(diaryEntry, token!);
+                setAlertMessage('Diary entry created successfully!');
             }
+            setIsAlertVisible(true);
         } catch (error) {
             console.error('Error saving diary entry:', error);
+            setAlertMessage('An error occurred while saving the diary entry.');
+            setIsAlertVisible(true);
         } finally {
             setIsLoading(false);
         }
     };
+
+    useEffect(() => {
+        let timer: NodeJS.Timeout;
+        if (isAlertVisible) {
+            timer = setTimeout(() => {
+                setIsAlertVisible(false);
+                setAlertMessage(null);
+            }, 5000);
+        }
+
+        return () => {
+            clearTimeout(timer);
+        };
+    }, [isAlertVisible]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = event.target;
@@ -83,6 +107,10 @@ const DiaryForm: React.FC<DiaryFormProps> = ({ mode }) => {
                     <input type="date" name="date" value={diaryEntry.date} onChange={handleChange} />
                 </div>
                 <div>
+                    <label>Comment:</label>
+                    <input type="text" name="comment" value={diaryEntry.comment} onChange={handleChange} />
+                </div>
+                <div>
                     <label>Weather:</label>
                     <select name="weather" value={diaryEntry.weather} onChange={handleChange}>
                         {Object.values(Weather).map(weather => (
@@ -100,6 +128,7 @@ const DiaryForm: React.FC<DiaryFormProps> = ({ mode }) => {
                 </div>
                 <button type="submit" disabled={isLoading}>{isLoading ? 'Loading...' : 'Submit'}</button>
             </form>
+            {isAlertVisible && <div className={`alert ${isAlertVisible ? '' : 'hidden'}`}>{alertMessage}</div>}
         </div>
     );
 };

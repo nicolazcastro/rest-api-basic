@@ -6,7 +6,7 @@ export interface DiaryUser {
   ref: 'IUser'
 }
 
-export interface IDiaryEntry extends Document{
+export interface IDiaryEntry extends Document {
   date: string
   weather: Weather
   visibility: Visibility
@@ -24,7 +24,7 @@ export const DiarySchema: Schema = new Schema({
   user: { type: Object, required: true }
 })
 
-export interface INonSensitiveInfoDiaryEntry extends Omit<IDiaryEntry, 'comment'>{}
-export interface INewDiaryEntry extends Omit<IDiaryEntry, 'id'>{}
-export interface IParsedDiaryEntry extends Omit<IDiaryEntry, 'id'|'user'>{userId: number}
+export interface INonSensitiveInfoDiaryEntry extends IDiaryEntry { }
+export interface INewDiaryEntry extends Omit<IDiaryEntry, 'id'> { }
+export interface IParsedDiaryEntry extends Omit<IDiaryEntry, 'id' | 'user'> { userId: number }
 export type NewDiaryEntry = Omit<IDiaryEntry, 'id'>

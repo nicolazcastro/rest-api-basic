@@ -12,7 +12,7 @@ router.route('/full/:id').get(Auth.authorize(['findById']), findById)
 
 router.route('/').post(Auth.authorize(['addDiary']), addDiary)
 
-router.route('/:id').patch(Auth.authorize(['updateDiary']), updateDiary)
+router.route('/:id').post(Auth.authorize(['updateDiary']), updateDiary)
 
 router.route('/:id').delete(Auth.authorize(['deleteDiary']), deleteDiary)
 

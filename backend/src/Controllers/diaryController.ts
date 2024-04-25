@@ -1,8 +1,8 @@
 import * as diaryServices from '../services/diaries/diariesServices'
 import { Request, Response } from 'express'
-import toNewDiaryEntry from '../services/diaries/diaryUtils'
+import { toNewDiaryEntry, toUpdatedDiaryEntry } from '../services/diaries/diaryUtils'
 
-export function getEntries (_req: Request, res: Response): void {
+export function getEntries(_req: Request, res: Response): void {
   diaryServices.getEntries().then((diaries) => {
     console.log('Result from service: ')
     console.log(diaries)
@@ -13,7 +13,7 @@ export function getEntries (_req: Request, res: Response): void {
   })
 }
 
-export function findByIdWithoutSensitiveInfo (req: Request, res: Response): void {
+export function findByIdWithoutSensitiveInfo(req: Request, res: Response): void {
   console.log(req.params.id)
   diaryServices.findByIdWithoutSensitiveInfo(req.params.id).then((diary) => {
     console.log('Result from service: ')
@@ -25,7 +25,7 @@ export function findByIdWithoutSensitiveInfo (req: Request, res: Response): void
   })
 }
 
-export function findById (req: Request, res: Response): void {
+export function findById(req: Request, res: Response): void {
   console.log(req.params.id)
   diaryServices.findById(req.params.id).then((diary) => {
     console.log('Result from service: ')
@@ -37,7 +37,7 @@ export function findById (req: Request, res: Response): void {
   })
 }
 
-export async function addDiary (req: Request, res: Response): Promise<void> {
+export async function addDiary(req: Request, res: Response): Promise<void> {
   try {
     const parsedDiaryEntry = toNewDiaryEntry(req.body)
     console.log(parsedDiaryEntry)
@@ -55,9 +55,9 @@ export async function addDiary (req: Request, res: Response): Promise<void> {
   }
 }
 
-export function updateDiary (req: Request, res: Response): void {
+export function updateDiary(req: Request, res: Response): void {
   try {
-    const parsedDiaryEntry = toNewDiaryEntry(req.body)
+    const parsedDiaryEntry = toUpdatedDiaryEntry(req.body)
     console.log(parsedDiaryEntry)
 
     diaryServices.updateDiary(req.params.id, parsedDiaryEntry).then((diary) => {
@@ -73,7 +73,7 @@ export function updateDiary (req: Request, res: Response): void {
   }
 }
 
-export function deleteDiary (req: Request, res: Response): void {
+export function deleteDiary(req: Request, res: Response): void {
   try {
     diaryServices.deleteDiary(req.params.id).then((diary) => {
       console.log('Result from deleted entry: ')

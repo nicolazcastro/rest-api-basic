@@ -61,4 +61,16 @@ const toNewDiaryEntry = (object: any): any => {
   return newEntry
 }
 
-export default toNewDiaryEntry
+const toUpdatedDiaryEntry = (object: any): any => {
+  const updatedEntry = {
+    comment: object.comment ? parseComment(object.comment) : undefined,
+    date: object.date ? parseDate(object.date) : undefined,
+    weather: object.weather ? parseWeather(object.weather) : undefined,
+    visibility: object.visibility ? parseVisibility(object.visibility) : undefined
+  }
+
+  // Remove undefined fields
+  return Object.fromEntries(Object.entries(updatedEntry).filter(([_, value]) => value !== undefined));
+}
+
+export { toNewDiaryEntry, toUpdatedDiaryEntry }

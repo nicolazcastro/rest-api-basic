@@ -4,7 +4,7 @@ import * as db from '../../db/db'
 
 const Diary = db.getDiaryModel()
 
-export async function getEntries (): Promise<IDiaryEntry[] | any> {
+export async function getEntries(): Promise<IDiaryEntry[] | any> {
   await db.connectDb()
 
   return Diary.find().then((entries: INonSensitiveInfoDiaryEntry[] | null) => {
@@ -32,7 +32,7 @@ export async function getEntries (): Promise<IDiaryEntry[] | any> {
   })
 }
 
-export async function findByIdWithoutSensitiveInfo (id: string): Promise<IDiaryEntry | any> {
+export async function findByIdWithoutSensitiveInfo(id: string): Promise<IDiaryEntry | any> {
   await db.connectDb()
   return Diary.findById(id).then((entry: INonSensitiveInfoDiaryEntry | null) => {
     if (entry == null) {
@@ -43,6 +43,7 @@ export async function findByIdWithoutSensitiveInfo (id: string): Promise<IDiaryE
         date: entry.date,
         weather: entry.weather,
         user: entry.user,
+        comment: entry.comment,
         visibility: entry.visibility
       }
       return obj
@@ -53,7 +54,7 @@ export async function findByIdWithoutSensitiveInfo (id: string): Promise<IDiaryE
   })
 }
 
-export async function findById (id: string): Promise<IDiaryEntry | any> {
+export async function findById(id: string): Promise<IDiaryEntry | any> {
   await db.connectDb()
   return Diary.findById(id).then((entry: INonSensitiveInfoDiaryEntry | null) => {
     return entry
@@ -63,7 +64,7 @@ export async function findById (id: string): Promise<IDiaryEntry | any> {
   })
 }
 
-export async function addDiary (parsedDiaryEntry: IParsedDiaryEntry): Promise<IDiaryEntry | any> {
+export async function addDiary(parsedDiaryEntry: IParsedDiaryEntry): Promise<IDiaryEntry | any> {
   await db.connectDb()
   const user = await userServices.findByUserId(parsedDiaryEntry.userId)
   if (user === null) {
@@ -90,7 +91,7 @@ export async function addDiary (parsedDiaryEntry: IParsedDiaryEntry): Promise<ID
   })
 }
 
-export async function updateDiary (id: string, parsedDiaryEntry: INewDiaryEntry): Promise<IDiaryEntry | any> {
+export async function updateDiary(id: string, parsedDiaryEntry: INewDiaryEntry): Promise<IDiaryEntry | any> {
   await db.connectDb()
   const updatedDiaryEntry = {
     date: parsedDiaryEntry.date,
@@ -109,7 +110,7 @@ export async function updateDiary (id: string, parsedDiaryEntry: INewDiaryEntry)
   })
 }
 
-export async function setDiaryUser (diary: IDiaryEntry): Promise<void> {
+export async function setDiaryUser(diary: IDiaryEntry): Promise<void> {
   await userServices.findByUserId(diary.userId).then(async (user) => {
     const diaryUser: DiaryUser = {
       type: user._id,
@@ -124,7 +125,7 @@ export async function setDiaryUser (diary: IDiaryEntry): Promise<void> {
   })
 }
 
-export async function deleteDiary (id: string): Promise<IDiaryEntry | any> {
+export async function deleteDiary(id: string): Promise<IDiaryEntry | any> {
   await db.connectDb()
   const filter = { _id: id }
   return Diary.findByIdAndDelete(filter).then((deletedEntry: any) => {

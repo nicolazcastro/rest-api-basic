@@ -27,3 +27,16 @@ body,
 .content {
     flex: 1;
 }
+
+.alert {
+    background-color: #f44336;
+    color: white;
+    padding: 15px;
+    margin-bottom: 15px;
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.alert.hidden {
+    opacity: 0;
+}
